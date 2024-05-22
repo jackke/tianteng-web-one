@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0,  maximum-scale=1.0, user-scalable=no"> -->
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico">
+  <title>
+    <%= htmlWebpackPlugin.options.title %>
+  </title>
+  <style>
+    body {
+      background: #010C27;
+      font-size: 20px;
+      /* position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      transform-origin: 0 0; */
+    }
+
+  </style>
+
+</head>
+
+<!-- <body style="width:1920px; height: 1080px; transform: scaleY(1) scaleX(1) translate(-50%, -50%)"> -->
+<body>
+    <noscript>
+      <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app" class="app"></div>
+    <!-- built files will be auto injected -->
+</body>
+
+</html>
