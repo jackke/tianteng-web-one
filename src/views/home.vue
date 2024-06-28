@@ -38,9 +38,10 @@ export default {
   background-image: url(@/assets/image/bg.png);
   background-size: 100% 100%;
   .content{
-    flex: 1;
+    // flex: 1;
+    height: 78.5%;
     overflow: hidden;
-    margin: 20px;
+    margin: 5px 20px 20px 20px;
   }
 }
 

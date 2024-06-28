@@ -11,7 +11,7 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column type="index" label="顺序"> </el-table-column>
                 <el-table-column prop="name" label="角色名称"> </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
@@ -26,7 +26,7 @@
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
        <el-dialog title="角色分配菜单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <div>
+            <div style="height: 500px; overflow-y: auto;">
                 <el-form  class="element-input" ref="ruleForm" :model="ruleForm" :rules="rules" size="medium" label-width="100px">
                     <el-form-item label="角色名称：" v-if="type == 'add'" key="name" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="请输入角色名称" clearable style="width: 200px;"></el-input> 
@@ -148,6 +148,22 @@ export default {
                 }
             ]
             this.getMenu(row.roleId)
+        },
+        dataDelete(row){
+            this.$confirm(`是否确认删除该角色？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http.post(`${this.$api.server}/role/del?id=${row.roleId}`).then(res => {
+                    if(res.code == 200) {
+                        this.initData()
+                        this.$message({ message: `删除成功`, type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
+            }).catch(err => {})
         },
         // -------------------------       tree start         ---------------------------------------
         getMenu(id){

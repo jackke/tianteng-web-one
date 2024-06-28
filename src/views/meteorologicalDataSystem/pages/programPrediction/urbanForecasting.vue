@@ -43,12 +43,12 @@
             </el-collapse> -->
        </div>
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table class="element-table"  :data="tableData" height="600" style="width: 100%">
-                <el-table-column type="index" label="顺序" width="55" v-if="tableDatakey.ele1" fixed></el-table-column>
-                <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]"></el-table-column>
+            <el-table class="element-table" :data="tableData" max-height="100%" style="width: 100%;">
+                <el-table-column type="index" label="顺序" width="55" v-if="tableDatakey.ele1"></el-table-column>
+                <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" min-width="120" :key="index" :prop="item" :label="tableDatakey[item]"></el-table-column>
             </el-table>
+            <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        <div class="el-dialog dialog-print" v-show="dialogVisible">
             <div id="tablePrint">
                 <div class="title-text">
@@ -141,6 +141,10 @@ export default {
             this.$http.get(`${this.$api.server}/town/type/info/${value.id}`).then(res => {
                 if(res.code == 200) {
                     this.tableDatakey = res.data.eleName || {}
+                    // this.tableShow = false
+                    // setTimeout(() => {
+                    //     this.tableShow = true
+                    // },500)
                 } else {
                     this.$message.error(res.message)
                 }

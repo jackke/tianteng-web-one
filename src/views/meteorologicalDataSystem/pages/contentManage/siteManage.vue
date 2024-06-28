@@ -59,7 +59,7 @@
             </el-form-item>
         </el-form>
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column type="index" label="顺序"> </el-table-column>
                 <el-table-column prop="code" label="站点编号"> </el-table-column>
                 <el-table-column prop="name" label="站点名称"> </el-table-column>

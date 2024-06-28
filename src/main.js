@@ -7,6 +7,9 @@ import store from "./store";
 import zhLang from 'element-ui/lib/locale/lang/zh-CN';
 import locale from './assets/elementUi/cn';
 
+// 将所有组件为全局组件
+import dataV from '@jiaminghi/data-view'
+Vue.use(dataV)
 
 Vue.use(ElementUI, {
   locale: { el: {...zhLang.el, ...locale.el}}

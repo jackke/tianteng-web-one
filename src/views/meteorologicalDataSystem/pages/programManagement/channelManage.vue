@@ -19,8 +19,7 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <!-- <div class="element-button"> <el-button size="medium" icon="el-icon-printer" type="primary" @click="tablePrint">打印</el-button></div> -->
-            <el-table id="tablePrint" class="element-table" v-loading="tableLoading" :data="tableData" max-height="850" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" max-height="850" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column prop="sort" label="顺序" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="name" label="频道名称"> </el-table-column>
                 <el-table-column prop="description" label="描述"></el-table-column>

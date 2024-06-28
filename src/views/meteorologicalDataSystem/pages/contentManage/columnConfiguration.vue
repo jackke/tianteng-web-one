@@ -1,4 +1,4 @@
-<!-- 栏目配置 -->
+<!-- 栏目配置 无接口，废弃-->
 <template>
     <div class="columnConfiguration">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="small">
@@ -12,7 +12,7 @@
         </el-form>
 
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" :data="tableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table id="tablePrint" class="element-table" height="100%" :data="tableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column type="index" label="顺序"> </el-table-column>
                 <el-table-column prop="date" label="站点名称"> </el-table-column>
                 <el-table-column prop="date" label="站点别名"> </el-table-column>
@@ -109,6 +109,7 @@ export default {
             rules:{
 
             },
+            tableLoading: false,
             dialogVisible: false,
             dialogVisibleSet: false,
         }

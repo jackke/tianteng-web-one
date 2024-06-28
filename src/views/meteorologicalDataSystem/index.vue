@@ -132,26 +132,22 @@ $_color: #00E4FF;
     width: 100%;
     height: 100%;
     display: flex;
-
     .content-right{
         background-image: url(@/assets/image/manage-bg.png);
         background-size: 100% 100%;
         margin-left: 20px;
         text-align: left;
         box-sizing: border-box;
-        width: 85%;
-        // width: 100%;
-        height: 100%;
+        width: 80%;
+        flex: 1;
         .content-right-box{
             margin: 20px;
-            padding-bottom: 20px;;
             height: 95%;
-            overflow:auto;
         }
     }
     // menu
     .menu-list{
-        width: 15%;
+        width: 250px;
         text-align: left;
         background-color: rgba(#0B192E, .5);
         border: 1px solid rgba(0, 241, 251, 0.3);
@@ -185,6 +181,19 @@ $_color: #00E4FF;
             display: flex;
             align-items: center;
             background-color: transparent;
+            position: relative;
+            ::after{
+                transition: all .3s;
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 0;
+                height: 100%;
+                background-image: url(@/assets/image/menu-bg.png);
+                background-size: 250px 100%;
+                background-repeat: no-repeat;
+            }
         }
         /deep/ .el-menu .el-menu-item span{
            width: 6px;
@@ -197,10 +206,13 @@ $_color: #00E4FF;
         }
         /deep/ .el-menu-item.is-current{
                 color: $_color;
-                background-image: url(@/assets/image/menu-bg.png);
-                background-size: 100% 100%;
+                // background-image: url(@/assets/image/menu-bg.png);
+                // background-size: 100% 100%;
                 span{
                     background-color: rgba($_color, .8);
+                }
+                ::after{
+                    width: 100%;
                 }
         }
         /deep/ .el-menu .el-submenu__title{

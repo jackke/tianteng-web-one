@@ -236,14 +236,14 @@ export default {
         .titleText {
             // width: 500px;
             text-align: center;
-            font-size: 32px;
+            font-size: 31px;
             font-weight: bold;
             // color: #FFFFFF;
             background: linear-gradient(0deg, #00F6FF 20%, #FFFFFF 60%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             padding-top: 22px;
-            padding-right: 20px;
+            padding-right: 25px;
         }
         .navTextStyle {
             width: 200px;

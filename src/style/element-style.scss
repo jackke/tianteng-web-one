@@ -362,8 +362,8 @@ $_labelColor:#D8FBFD;
 }
 /* 弹框 */
 .el-dialog{
-    // background-color: #152C49;
-    background-image: linear-gradient(to bottom, #16395A, #327278);
+    background-color: #16395A;
+    // background-image: linear-gradient(to bottom, #16395A, #327278);
     .el-dialog__header{
         border-bottom: 1px solid rgba($_textColor, .5);
     }

@@ -48,16 +48,16 @@
                 <div>温度：</div> <p></p>
             </div>
        </div>
-       <div style="flex: 1;">
+       <div style="flex: 1;display: flex; flex-direction: column;">
             <!-- <div class="element-button"> <el-button size="medium" icon="el-icon-printer" type="primary" @click="tablePrint">打印</el-button></div> -->
-            <el-table id="tablePrint" class="element-table"  :data="tableData" style="width: 100%;" empty-text="请先选择“频道》栏目》时效”，数据查询">
+            <el-table id="tablePrint" class="element-table" height="100%"  :data="tableData" style="width: 100%;flex: 1;" empty-text="请先选择“频道》栏目》时效”，数据查询">
                 <el-table-column type="index" label="顺序" width="55" fixed> </el-table-column>
                 <el-table-column prop="type" label="栏目" width="200" fixed> </el-table-column>
                 <el-table-column prop="siteId" label="站点编号" width="100" fixed> </el-table-column>
-                <el-table-column v-for="(item, index) in Object.keys(tableEleName)" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
+                <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
             </el-table>
+            <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
     </div>
 </template>
 <script>
@@ -111,7 +111,7 @@ export default {
             this.tableLoading = true
             this.$http.post(`${this.$api.server}/town/table/page`, params).then(res => {
                 this.tableLoading = false
-                if(res.code == 200 && res.data) {
+                if(res.code == 200 && res.data.page) {
                     this.missSite = res.data.missSite || ''
                     this.tableData = res.data.page.records || []
                     this.total = res.data.page.total || 0

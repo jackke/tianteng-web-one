@@ -34,7 +34,7 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table class="element-table" v-loading="tableLoading" :data="tableData" empty-text="请先切换“频道名称”进行查询数据" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table class="element-table" height="100%" v-loading="tableLoading" :data="tableData" empty-text="请先切换“频道名称”进行查询数据" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column prop="sort" label="顺序" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="channelName" label="所属频道"> </el-table-column>
                 <el-table-column prop="name" label="栏目名称"> </el-table-column>
@@ -46,16 +46,29 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
-                <el-table-column label="操作" width="500">
+                <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
+                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)">
+                            <el-button type="primary" >
+                                更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="dialogVisible">编辑栏目</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleOne" >编辑列表</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleElement" divided>要 素</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleSite">站 点</el-dropdown-item>
+                                <el-dropdown-item command="columnTransfer">转 移</el-dropdown-item>
+                                <el-dropdown-item command="columnDelete">删 除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
                         <!-- <el-button size="small"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button>
                         <el-button size="small"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
-                        <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisible', 1)">编辑</el-button>
+                        <!-- <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisible', 1)">编辑</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleOne', 2)">编辑1</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleElement', 3)">要素</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleSite', 4)">站点</el-button>
                         <el-button size="medium" type="primary" @click="columnTransfer(scope.row)">转移</el-button>
-                        <el-button size="medium" type="danger" @click="columnDelete(scope.row)">删除</el-button>
+                        <el-button size="medium" type="danger" @click="columnDelete(scope.row)">删除</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
@@ -250,7 +263,7 @@
             </div>
         </el-dialog>
          <!-- 城市站点 -->
-         <el-dialog title="项目列表" :visible.sync="dialogVisibleSite" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+         <el-dialog title="项目列表" :visible.sync="dialogVisibleSite" width="50%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
                 <el-descriptions :column="2">
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{ ruleForm.name}}</el-descriptions-item>
@@ -684,6 +697,21 @@ export default {
             })
             let sortIndexArr = indexArr.sort((a,b) => a - b)
             this.ruleForm.element.splice(sortIndexArr[0] + 1, 0, ...arr)
+        },
+        // 更多操作
+        handleCommand(val, row){
+            console.log(val, row);
+            if (val == 'columnDelete' || val == 'columnTransfer') {
+                this[val](row)
+            } else {
+                let column = {
+                    dialogVisible: 1,
+                    dialogVisibleOne: 2,
+                    dialogVisibleElement: 3,
+                    dialogVisibleSite: 4
+                }
+                this.columnEdit(row, val, column[val])
+            }
         },
         // 编辑新建 按钮
         submitForm(){

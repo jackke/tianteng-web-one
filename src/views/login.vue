@@ -7,7 +7,7 @@
             <svg><filter id="fractal" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%"><feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.005 0.005" numOctaves="10"><animate attributeName="baseFrequency" dur="30s" values="0.005 0.005;0.05 0.3;0.005 0.005" repeatCount="indefinite"></animate></feTurbulence><feDisplacementMap in="SourceGraphic" scale="15"></feDisplacementMap></filter></svg> -->
         </div>
         <div class="text">
-            <h1>天腾气象影视数据产品生产系统</h1>
+            <h1>气象影视数据服务系统</h1>
         </div>
         <div class="form-login">
             <div style="text-align: center;">
@@ -22,7 +22,7 @@
                 </el-form-item>
                 <el-form-item  prop="password" class="password">
                     <div class="input-box">
-                        <input type="password" v-model="form.password" required>
+                        <input type="password" v-model="form.password" required @keydown.enter="onSubmit">
                         <label>Password</label>
                     </div>
                 </el-form-item>
@@ -106,6 +106,7 @@ import "../utils/vendors.js"
                             this.$message.error(res.message)
                         }
                     }).catch((error) => {
+                        this.loading = false
                         this.$message.error(error)
                     })
                 } else {
@@ -137,7 +138,8 @@ import "../utils/vendors.js"
 </script>
 <!-- <style src="../style/login.css"> </style> -->
 <style scoped lang="scss">
-$--color: #efd28e;
+// $--color: #efd28e;
+$--color: rgba(#00F0FF, 0.6);
 .login-box{
     width: 100%;
     height: 100%;

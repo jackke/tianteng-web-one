@@ -14,14 +14,14 @@ module.exports = defineConfig({
     https: false, // https:{type:Boolean}
     open: false, //配置自动启动浏览器
     proxy: {
-      '/api' : {
-        target: 'http://192.168.1.42:8003',
-        pathRewrite: { '^/api': '' },
-        changeOrigin: true, // target 是域名的话，需要这个参数
-        secure: false // 设置支持https协议的代理
-      },
+      // '/api' : {
+      //   target: 'http://192.168.1.42:8003',
+      //   pathRewrite: { '^/api': '' },
+      //   changeOrigin: true, // target 是域名的话，需要这个参数
+      //   secure: false // 设置支持https协议的代理
+      // },
       '/server' : {
-        target: 'http://192.168.1.42:8004',
+        target: 'http://192.168.1.61:8004',
         pathRewrite: { '^/server': '' },
         changeOrigin: true, // target 是域名的话，需要这个参数
         secure: false // 设置支持https协议的代理
