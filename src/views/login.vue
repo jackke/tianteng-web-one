@@ -39,8 +39,9 @@
 
 <script>
 
-import "../utils/demo5.js"
 import "../utils/vendors.js"
+import demo5 from "../utils/demo5.js"
+import $ from 'jquery'
 // import Particles from "@/assets/js/particles.js"
     export default {
       name: 'login',
@@ -66,14 +67,14 @@ import "../utils/vendors.js"
       },
       beforeDestroy(){
         console.log("销毁 login");
+        // 销毁 dom 元素，防止性能损耗
+        if ($('body > canvas')[0]){
+            $('body > canvas')[0].remove();
+        }
       },
       created(){},
       mounted(){
-        // this.$nextTick(() => {
-        //     const ctx = document.getElementById('snowCanvas').getContext('2d');
-        //     // drawCanvas(ctx)
-        //     this.initCanvas()
-        // })
+        demo5()
       },
       methods: {
         onSubmit(){
@@ -115,24 +116,6 @@ import "../utils/vendors.js"
                 }
             });
         },
-        // 背景动画
-        initCanvas(){
-            Particles.init({
-                selector: ".background",
-                color: ["#03dac6", "#ff0266", "#86A8E7"],
-                connectParticles: true,
-                responsive: [
-                {
-                    breakpoint: 800,
-                    options: {
-                    color: "#ff0266",
-                    maxParticles: 43,
-                    connectParticles: false
-                    }
-                }
-                ]
-            });
-        }
     }
 }
 </script>

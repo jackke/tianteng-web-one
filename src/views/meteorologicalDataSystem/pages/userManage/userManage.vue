@@ -1,7 +1,7 @@
 <!-- 用户管理 -->
 <template>
     <div class="userManage">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="small">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
             <el-form-item label="工号ID：">
                 <el-input v-model="params.cardId" placeholder="请输入工号ID" clearable></el-input>
             </el-form-item>
@@ -23,7 +23,7 @@
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查 询</el-button>
-                <el-button size="small" icon="el-icon-plus" type="warning" @click="userAdd">添 加</el-button>
+                <el-button size="medium" icon="el-icon-plus" type="warning" @click="userAdd">添 加</el-button>
             </el-form-item>
         </el-form>
 
@@ -46,20 +46,20 @@
                         <span type="text" v-if="scope.row.state == 2" style="color: #F95555">已禁用</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="240">
+                <el-table-column label="操作" width="280">
                     <template slot-scope="scope">
-                        <el-button size="small"  type="primary" @click="userInfo(scope.row)">重置密码</el-button>
-                        <!-- <el-button size="small"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button> -->
-                        <!-- <el-button size="small"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
-                        <el-button size="small"  type="primary" @click="userEdit(scope.row)">编辑</el-button>
-                        <el-button size="small"  type="danger" @click="userDelete(scope.row)">删除</el-button>
+                        <el-button size="medium"  type="primary" @click="userInfo(scope.row)">重置密码</el-button>
+                        <!-- <el-button size="medium"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button> -->
+                        <!-- <el-button size="medium"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
+                        <el-button size="medium"  type="primary" @click="userEdit(scope.row)">编辑</el-button>
+                        <el-button size="medium"  type="danger" @click="userDelete(scope.row)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
 
-        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="5%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <!-- <span>这是一段信息</span> -->
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="element-input">
                 <el-form-item label="工号ID：" prop="cardId">

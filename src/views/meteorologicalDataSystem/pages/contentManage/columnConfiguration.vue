@@ -1,7 +1,7 @@
 <!-- 栏目配置 无接口，废弃-->
 <template>
     <div class="columnConfiguration">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" size="small">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="站点别名：">
                 <el-input v-model="params.name" placeholder="请输入站点别名"></el-input>
             </el-form-item>
@@ -20,16 +20,16 @@
                 <el-table-column prop="date" label="更新时间"> </el-table-column>
                 <el-table-column label="操作"  width="50">
                     <template slot-scope="scope">
-                        <el-button size="small"  type="text" @click="edit(scope.row)">保 存</el-button>
+                        <el-button size="medium"  type="text" @click="edit(scope.row)">保 存</el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;"></ComPagination>
         </div>
 
-        <el-dialog title="选择站点：" class="column-dialog" :visible.sync="dialogVisible" width="50%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="选择站点：" class="column-dialog" :visible.sync="dialogVisible" width="50%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div>
-                <el-form class="element-input" :inline="true" ref="ruleForm" :model="ruleForm" size="small">
+                <el-form class="element-input" :inline="true" ref="ruleForm" :model="ruleForm" size="medium">
                     <el-form-item label="站点编号：">
                         <el-input v-model="ruleForm.site" placeholder="请输入站点号" clearable></el-input>
                     </el-form-item>
@@ -62,7 +62,7 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="站点设置：" class="column-dialog" :visible.sync="dialogVisibleSet" width="30%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="站点设置：" class="column-dialog" :visible.sync="dialogVisibleSet" width="30%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div>
                 <el-table class="element-table" :data="siteSetTableData">
                     <el-table-column type="index" label="顺序" width="55"> </el-table-column>

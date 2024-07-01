@@ -33,7 +33,7 @@
                 </el-dropdown>
             </div>
         </div>
-        <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="原密码：" prop="oldPass">
                     <el-input v-model="ruleForm.oldPass" placeholder="请输入原密码"></el-input>

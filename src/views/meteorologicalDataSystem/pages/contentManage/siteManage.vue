@@ -80,7 +80,7 @@
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="添加站点" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+       <el-dialog title="添加站点" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"  class="element-input">
                 <el-form-item label="站点编号：" prop="code">
                     <el-input v-model="ruleForm.code" placeholder="请输入站点编号"></el-input>

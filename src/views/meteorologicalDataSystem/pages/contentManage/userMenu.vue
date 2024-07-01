@@ -25,7 +25,7 @@
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="角色分配菜单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+       <el-dialog title="角色分配菜单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div style="height: 500px; overflow-y: auto;">
                 <el-form  class="element-input" ref="ruleForm" :model="ruleForm" :rules="rules" size="medium" label-width="100px">
                     <el-form-item label="角色名称：" v-if="type == 'add'" key="name" prop="name">

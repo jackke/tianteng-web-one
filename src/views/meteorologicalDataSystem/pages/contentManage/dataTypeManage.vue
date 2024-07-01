@@ -38,7 +38,7 @@
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="添加站点" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+       <el-dialog title="添加站点" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"  class="element-input">
                 <el-form-item label="数据名称：" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入数据名称"></el-input>
@@ -60,12 +60,12 @@
                             v-if="inputVisible"
                             v-model="inputValue"
                             ref="saveTagInput"
-                            size="small"
+                            size="medium"
                             @keyup.enter.native="handleInputConfirm"
                             @blur="handleInputConfirm"
                             >
                         </el-input>
-                        <el-button v-else type="primary" size="small" @click="showInput">+ 添加元素名称</el-button>
+                        <el-button v-else type="primary" size="medium" @click="showInput">+ 添加元素名称</el-button>
                     </div>
                 </el-form-item>
                 <!-- <el-form-item label="站点名称：" prop="resource">

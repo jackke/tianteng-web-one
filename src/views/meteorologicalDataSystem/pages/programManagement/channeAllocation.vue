@@ -47,7 +47,7 @@
                             ></el-transfer>
                         </div>
                         <div style="margin-top: 20px; text-align: center;">
-                            <el-button size="small"  type="primary" @click="saveData">设 置</el-button>
+                            <el-button size="medium"  type="primary" @click="saveData">设 置</el-button>
                         </div>
                     </div>
                 </el-card>

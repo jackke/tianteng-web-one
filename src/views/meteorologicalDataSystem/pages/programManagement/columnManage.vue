@@ -48,8 +48,8 @@
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
                 <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
-                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)">
-                            <el-button type="primary" >
+                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)" >
+                            <el-button type="primary" size="medium">
                                 更多操作<i class="el-icon-arrow-down el-icon--right"></i>
                             </el-button>
                             <el-dropdown-menu slot="dropdown">
@@ -61,8 +61,8 @@
                                 <el-dropdown-item command="columnDelete">删 除</el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
-                        <!-- <el-button size="small"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button>
-                        <el-button size="small"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
+                        <!-- <el-button size="medium"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button>
+                        <el-button size="medium"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
                         <!-- <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisible', 1)">编辑</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleOne', 2)">编辑1</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleElement', 3)">要素</el-button>
@@ -75,8 +75,8 @@
             <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
          <!--  编辑栏目 -->
-        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :visible.sync="dialogVisible" width="90%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  :inline="true" label-width="100px" class="element-input">
+        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" top="5%" :visible.sync="dialogVisible" width="90%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  :inline="true" label-width="100px" class="element-input" size="medium">
                 <el-form-item label="频道名称：" prop="channelName" >
                     <el-autocomplete
                         v-show="type == 'add'"
@@ -119,8 +119,8 @@
                         <el-checkbox v-for="(item, index) in listElement" :key="index" :label="item.value" name="type">{{ item.name }}</el-checkbox>
                     </el-checkbox-group> -->
                     <div>
-                        <el-button class="button-s"  size="small" icon="el-icon-arrow-up" type="primary" :disabled="rightTransferValue.length == 0" @click="arrowUp('rightTransferValue','element')"></el-button>
-                        <el-button class="button-x"  size="small" icon="el-icon-arrow-down" :disabled="rightTransferValue.length == 0"  type="primary" @click="arrowDown('rightTransferValue', 'element')"></el-button>
+                        <el-button class="button-s"  size="medium" icon="el-icon-arrow-up" type="primary" :disabled="rightTransferValue.length == 0" @click="arrowUp('rightTransferValue','element')"></el-button>
+                        <el-button class="button-x"  size="medium" icon="el-icon-arrow-down" :disabled="rightTransferValue.length == 0"  type="primary" @click="arrowDown('rightTransferValue', 'element')"></el-button>
                     </div>
                     <el-transfer
                         class="column-trans"
@@ -135,20 +135,20 @@
                     <div style="display: flex;">
                         <el-form-item   style="width: 50%;">
                             <el-input v-model="siteValue" placeholder="请输入城市站点" clearable style="width: 260px;" @change="siteData(siteValue)">
-                                <el-button slot="append" size="small" @click="siteData(siteValue)">查询</el-button>
-                                <el-button slot="append" size="small" type="primary" >导入</el-button>
+                                <el-button slot="append" size="medium" @click="siteData(siteValue)">查询</el-button>
+                                <el-button slot="append" size="medium" type="primary" >导入</el-button>
                             </el-input>
                             <div style="color: #fff;"> 提示：请选择数据类型。 </div>
                         </el-form-item>
-                        <el-form-item  label="设置别名：" style="width: 50%">
+                        <el-form-item  label="设置别名：" style="width: 50%; margin:0;">
                             <el-input v-model="propsName" placeholder="请输入设置别名" clearable style="width:180px">
-                                <el-button slot="append" size="small" type="primary" :disabled="siteRightTransferValue.length == 0" @click="propsClick">确定</el-button>
+                                <el-button slot="append" size="medium" type="primary" :disabled="siteRightTransferValue.length == 0" @click="propsClick">确定</el-button>
                             </el-input> 
                         </el-form-item>
                     </div>
                     <div>
-                        <el-button  class="button-s-one" size="small" icon="el-icon-arrow-up" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowUp('siteRightTransferValue', 'siteRef')"></el-button>
-                        <el-button  class="button-x-one" size="small" icon="el-icon-arrow-down" :disabled="siteRightTransferValue.length == 0"  type="primary" @click="arrowDown('siteRightTransferValue', 'siteRef')"></el-button>
+                        <el-button  class="button-s-one" size="medium" icon="el-icon-arrow-up" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowUp('siteRightTransferValue', 'siteRef')"></el-button>
+                        <el-button  class="button-x-one" size="medium" icon="el-icon-arrow-down" :disabled="siteRightTransferValue.length == 0"  type="primary" @click="arrowDown('siteRightTransferValue', 'siteRef')"></el-button>
                     </div>
                     <el-transfer
                         class="column-trans"
@@ -170,12 +170,12 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" style="text-align: center;">
-                <el-button size="small" @click="handleClose">取 消</el-button>
-                <el-button size="small" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+                <el-button size="medium" @click="handleClose">取 消</el-button>
+                <el-button size="medium" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
         <!--  排序 -->
-        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div style="color: #6EA4B2;position: relative; top: -15px;z-index: 10;">提示：拖动下方列表进行排序。</div>
             <div style="display: flex; max-height: 600px; overflow: auto">
                 <div style="width: 50px;">
@@ -191,8 +191,8 @@
             </div>
         </el-dialog>
         <!-- 转移栏目 -->
-        <el-dialog title="转移栏目" :visible.sync="dialogVisibleTransfer" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="transferForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input">
+        <el-dialog title="转移栏目" :visible.sync="dialogVisibleTransfer" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <el-form :model="transferForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input" size="medium">
                 <el-form-item label="栏目名称：" prop="name">
                     <div style="color: #fff">{{ transferForm.name}}</div>
                 </el-form-item>
@@ -217,12 +217,12 @@
             </div>
         </el-dialog>
          <!-- 添加要素 -->
-         <el-dialog title="项目列表" :visible.sync="dialogVisibleElement" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+         <el-dialog title="项目列表" :visible.sync="dialogVisibleElement" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <el-descriptions>
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{  ruleForm.name}}</el-descriptions-item>
                     <el-descriptions-item label="数据类型"> 
-                        <el-form :model="ruleForm" class="element-input">
+                        <el-form :model="ruleForm" class="element-input" size="medium">
                             <el-form-item>
                                 <el-select v-model="ruleForm.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
                                     <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item.id"></el-option>
@@ -231,7 +231,7 @@
                         </el-form>
                     </el-descriptions-item>
                 </el-descriptions>
-                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input">
+                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input" size="medium">
                     <el-form-item prop="element">
                          <div style="color:#fff" >
                             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
@@ -263,7 +263,7 @@
             </div>
         </el-dialog>
          <!-- 城市站点 -->
-         <el-dialog title="项目列表" :visible.sync="dialogVisibleSite" width="50%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+         <el-dialog title="项目列表" :visible.sync="dialogVisibleSite" width="50%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <el-descriptions :column="2">
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{ ruleForm.name}}</el-descriptions-item>
@@ -317,9 +317,9 @@
                 <el-button size="medium" type="primary" @click="submitSiteSort" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
-        <!--  编辑栏目1 -->
-        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :visible.sync="dialogVisibleOne" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  label-width="100px" class="element-input">
+        <!--  编辑列表 -->
+        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :visible.sync="dialogVisibleOne" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  label-width="100px" class="element-input" size="medium">
                 <el-form-item label="频道名称：" prop="channelName" >
                     <el-autocomplete
                         style="width: 100%;"
@@ -335,7 +335,7 @@
                     </el-autocomplete>
                 </el-form-item>
                 <el-form-item label="栏目名称：" prop="name" >
-                    <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
+                    <el-input size="medium" v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
                 </el-form-item>
                 <el-form-item label="数据类型：" prop="townTypeId">
                     <el-select v-model="ruleForm.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">

@@ -42,7 +42,7 @@
             <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
          <!--  编辑频道 -->
-        <el-dialog :title="type == 'add' ? '添加频道' : '编辑频道'" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog :title="type == 'add' ? '添加频道' : '编辑频道'" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input">
                 <el-form-item label="频道名称：" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
@@ -63,7 +63,7 @@
             </div>
         </el-dialog>
         <!--  排序 -->
-        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div style="display: flex; max-height: 600px; overflow: auto">
                 <el-table class="element-table" v-loading="tableLoading" :data="tableDataSort" @selection-change="handleSelectionChange" max-height="600" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                     <!-- <el-table-column prop="sort" label="顺序" style="text-align: center;" width="55"> </el-table-column> -->
