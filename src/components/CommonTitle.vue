@@ -139,7 +139,7 @@ export default {
                     this.dialogLoading = true
                     let data = {...this.ruleForm}
                     data.id = this.$store.state.userId
-                    this.$http.post(`${this.$api.api}/user/mypwd/mod`, data).then(res => {
+                    this.$http.post(`${this.$api.server}/user/mypwd/mod`, data).then(res => {
                         this.dialogLoading = false
                         if (res.code == 200){
                             this.handleClose()
@@ -162,7 +162,10 @@ export default {
                 this.dialogVisible = true
             }
             if (value == 'out'){
-                this.$http.post(`${this.$api.api}/user/exit`, {account: this.$store.state.userAccount}).then(res => {
+                // sessionStorage.clear()
+                // localStorage.clear()
+                // this.$router.push('/login')
+                this.$http.post(`${this.$api.server}/user/exit`, {account: this.$store.state.userAccount}).then(res => {
                     if(res.code == 200) {
                         this.$router.push('/login')
                         sessionStorage.clear()
