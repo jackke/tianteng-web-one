@@ -23,7 +23,7 @@
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查 询</el-button>
-                <el-button size="medium" icon="el-icon-plus" type="warning" @click="userAdd">添 加</el-button>
+                <el-button icon="el-icon-plus" type="warning" @click="userAdd">添 加</el-button>
             </el-form-item>
         </el-form>
 
@@ -61,7 +61,7 @@
 
         <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="5%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <!-- <span>这是一段信息</span> -->
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="element-input">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="element-input" size="medium">
                 <el-form-item label="工号ID：" prop="cardId">
                     <el-input v-model="ruleForm.cardId" placeholder="请输入工号ID"></el-input>
                 </el-form-item>
@@ -106,8 +106,8 @@
                 </el-form-item>
             </el-form>
             <div slot="footer" style="text-align: center;">
-                <el-button @click="handleClose">取 消</el-button>
-                <el-button type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+                <el-button size="medium" @click="handleClose">取 消</el-button>
+                <el-button size="medium"  type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
     </div>
@@ -312,9 +312,6 @@ export default {
                             this.$message.error(error)
                         })
                     }
-
-                    
-                   
                 } else {
                     console.log('error submit!!');
                     return false;

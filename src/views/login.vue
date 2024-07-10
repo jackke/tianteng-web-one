@@ -240,7 +240,7 @@ $--color: rgba(#00F0FF, 0.6);
     width: 100%;
     background-color: $--color;
     border-color: $--color;
-    color: #000;
+    color: #fcfcfc;
     margin-top: 20px;
 
 }

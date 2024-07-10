@@ -39,13 +39,13 @@
 
        <div class="title-text">
             <div> 
-                <div>时间：</div> <p></p>
+                <div style="width: 60px;">时间：</div> <p style="flex:1"></p>
             </div>
             <div> 
-                <div>数据：</div> <p>{{ missSite }}</p>
+                <div style="width: 60px;">数据：</div> <p style="flex:1">{{ missSite }}</p>
             </div>
             <div> 
-                <div>温度：</div> <p></p>
+                <div style="width: 60px;">温度：</div> <p style="flex:1"></p>
             </div>
        </div>
        <div style="flex: 1;display: flex; flex-direction: column;">

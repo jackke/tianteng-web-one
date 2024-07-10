@@ -43,23 +43,25 @@
         </div>
          <!--  编辑频道 -->
         <el-dialog :title="type == 'add' ? '添加频道' : '编辑频道'" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input">
-                <el-form-item label="频道名称：" prop="name">
-                    <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
-                </el-form-item>
-                <el-form-item label="状态：" prop="status">
-                    <el-radio-group v-model="ruleForm.status">
-                        <el-radio :label="1">启用</el-radio>
-                        <el-radio :label="2">禁用</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="描述：">
-                    <el-input type="textarea" v-model="ruleForm.description" placeholder="描述"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" style="text-align: center;">
-                <el-button size="medium" @click="handleClose">取 消</el-button>
-                <el-button size="medium" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+            <div>
+                <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input">
+                    <el-form-item label="频道名称：" prop="name">
+                        <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
+                    </el-form-item>
+                    <el-form-item label="状态：" prop="status">
+                        <el-radio-group v-model="ruleForm.status">
+                            <el-radio :label="1">启用</el-radio>
+                            <el-radio :label="2">禁用</el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="描述：">
+                        <el-input type="textarea" v-model="ruleForm.description" placeholder="描述"></el-input>
+                    </el-form-item>
+                </el-form>
+                <div slot="footer" style="text-align: center;">
+                    <el-button size="medium" @click="handleClose">取 消</el-button>
+                    <el-button size="medium" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+                </div>
             </div>
         </el-dialog>
         <!--  排序 -->
