@@ -9,8 +9,8 @@ let pathArr = ['login', 'index', 'meteorologicalDataSystem']
 router.beforeEach((to,from,next)=>{
     let pathName = to.name;
     if (pathArr.indexOf(pathName) == -1){
-      next({path:'/404'})
-      // next({path:'/meteorologicalDataSystem'})
+      // next()
+      next({path:'/meteorologicalDataSystem'})
     }  
     next()
 })

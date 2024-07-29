@@ -59,7 +59,7 @@
             <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
 
-        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="5%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="5%" :before-close="handleClose" :lock-scroll="true" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <!-- <span>这是一段信息</span> -->
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="element-input" size="medium">
                 <el-form-item label="工号ID：" prop="cardId">
@@ -76,12 +76,12 @@
                         <el-option :label="item.name" :value="item.roleId" v-for="(item, index) in roleOptions" :key="index"></el-option>
                     </el-select>
                 </el-form-item>
-              
+                
                 <el-form-item label="手机号：" prop="mobile">
-                    <el-input v-model="ruleForm.mobile" placeholder="请输入用户名称"></el-input>
+                    <el-input v-model="ruleForm.mobile" placeholder="请输入手机号"></el-input>
                 </el-form-item>
                 <el-form-item label="邮箱：" prop="email">
-                    <el-input v-model="ruleForm.email" placeholder="请输入用户名称"></el-input>
+                    <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
                 </el-form-item>
                 <el-form-item label="是否是审核人员：" required>
                     <el-radio-group v-model="ruleForm.review">

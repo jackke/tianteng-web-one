@@ -30,7 +30,7 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style>
   #app {
     --font-smoothing: grayscale;
     color: #FFFFFF;

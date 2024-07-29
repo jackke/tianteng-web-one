@@ -39,7 +39,9 @@
 
        <div class="title-text">
             <div> 
-                <div style="width: 60px;">时间：</div> <p style="flex:1"></p>
+                <div style="width: 60px;">时间：</div> <p style="flex:1">  
+                   
+                </p>
             </div>
             <div> 
                 <div style="width: 60px;">数据：</div> <p style="flex:1">{{ missSite }}</p>
@@ -278,6 +280,20 @@ export default {
     }
     .title-text >div:nth-last-child(1){
         border-bottom: 0;
+    }
+    .ul-li{
+        display: flex;
+    }
+    .ul-li li {
+        width: 50px;
+        height: 50px;
+        background: rgba(#000000, $alpha: .5);
+        &:hover{
+            cursor: text;
+        }
+        &:nth-child(n + 5){
+            background-color: red;
+        }
     }
 }
 
