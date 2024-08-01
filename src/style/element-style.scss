@@ -113,8 +113,12 @@ $_labelColor:#D8FBFD;
     .el-date-table tr, .el-date-table tbody tr:nth-child(even) {
         background-color: transparent !important;
     }
+    .el-input__inner{
+        background-color: #006092 !important;
+        color: #fff;
+    }
 }
-.mars-date, .mars-date-position{
+.mars-date-position{
     top: auto !important;
     left: auto !important;
 }

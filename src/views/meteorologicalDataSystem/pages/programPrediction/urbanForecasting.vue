@@ -7,7 +7,7 @@
                     <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item"></el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="时间类型：">
+            <el-form-item label="时次：">
                 <el-select v-model="params.time" placeholder="请选择时间类型" popper-class="mars-select">
                     <el-option label="全部"  :value="timeOptions.map(item => item).join(',')"></el-option>
                     <el-option v-for="(item, index) in timeOptions" :key="index" :label="item" :value="item"></el-option>

@@ -54,7 +54,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
             </div>
             <div slot="footer" style="text-align: center;">
                 <el-button @click="handleClose">取 消</el-button>
