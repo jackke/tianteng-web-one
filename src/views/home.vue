@@ -1,6 +1,8 @@
 <template>
   <div class="mars-box">
-      <CommonTitle categoryName='marsMain'></CommonTitle>
+    <div class="headTitle">
+        <CommonTitle categoryName='marsMain'></CommonTitle>
+    </div>
       <div class="content">
          <router-view></router-view>
       </div>
@@ -37,9 +39,11 @@ export default {
   flex-direction: column;
   background-image: url(@/assets/image/bg.png);
   background-size: 100% 100%;
+  .headTitle{
+    height: 10%;
+  }
   .content{
-    // flex: 1;
-    height: 78.5%;
+    height: 90%;
     overflow: hidden;
     margin: 5px 20px 20px 20px;
   }

@@ -5,7 +5,7 @@
                 <div>{{ BjTime }}</div>
             </div>
             <div class="middle">
-                <div class="titleText">“天腾”气象影视数据产品生产系统 </div>
+                <div class="titleText"><h2>“天腾”气象影视数据产品生产系统</h2></div>
                 <!-- 左侧导航 -->
                 <div class="leftNav" v-show="token">
                     <div v-for="(item, index) in leftNavList" :key="index">
@@ -239,7 +239,7 @@ export default {
         .titleText {
             // width: 500px;
             text-align: center;
-            font-size: 31px;
+            // font-size: 31px;
             font-weight: bold;
             // color: #FFFFFF;
             background: linear-gradient(0deg, #00F6FF 20%, #FFFFFF 60%);

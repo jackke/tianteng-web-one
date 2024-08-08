@@ -3,10 +3,10 @@
     <div class="siteManage">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="站点编号：">
-               <el-input v-model="params.site" placeholder="请输入站点号" clearable></el-input>
+               <el-input v-model.trim="params.code" placeholder="请输入站点号" clearable></el-input>
             </el-form-item>
             <el-form-item label="站点名称：">
-               <el-input v-model="params.name" placeholder="请输入站点名称" clearable></el-input>
+               <el-input v-model.trim="params.name" placeholder="请输入站点名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="状态：">
                 <el-select v-model="params.status" placeholder="请选择" popper-class="mars-select" style="width: 100px;">
@@ -49,7 +49,7 @@
                     title="提示:"
                     width="200"
                     trigger="hover"
-                    content="若需要栏目配置的站点顺序请选择“按配置”导出">
+                    content="若需要栏目配置的站点序号请选择“按配置”导出">
                     <el-button slot="reference" icon="el-icon-printer" type="primary" @click="exportText">导 出</el-button>
                 </el-popover>
             </el-form-item>
@@ -60,7 +60,7 @@
         </el-form>
        <div style="flex: 1;display: flex; flex-direction: column;">
             <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="code" label="站点编号"> </el-table-column>
                 <el-table-column prop="name" label="站点名称"> </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
@@ -128,6 +128,7 @@ export default {
             tableLoading: false,
             params:{
                 name: "",
+                code: '',
                 status: '',
                 pageNum: 1,
                 pageSize: 10,

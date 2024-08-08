@@ -147,7 +147,7 @@ $_color: #00E4FF;
     }
     // menu
     .menu-list{
-        width: 250px;
+        width: 16%;
         text-align: left;
         background-color: rgba(#0B192E, .5);
         border: 1px solid rgba(0, 241, 251, 0.3);
@@ -191,7 +191,7 @@ $_color: #00E4FF;
                 width: 0;
                 height: 100%;
                 background-image: url(@/assets/image/menu-bg.png);
-                background-size: 248px 100%;
+                background-size: 98% 100%;
                 background-repeat: no-repeat;
             }
         }

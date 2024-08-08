@@ -35,7 +35,7 @@
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
             <el-table class="element-table" height="100%" v-loading="tableLoading" :data="tableData" empty-text="请先切换“频道名称”进行查询数据" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column prop="sort" label="顺序" style="text-align: center;"> </el-table-column>
+                <el-table-column prop="sort" label="序号" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="channelName" label="所属频道"> </el-table-column>
                 <el-table-column prop="name" label="栏目名称"> </el-table-column>
                 <el-table-column prop="description" label="描述"></el-table-column>
@@ -279,7 +279,7 @@
                     </el-form-item>
                     <el-form-item >
                         <el-table ref="tableSiteList" class="element-table" max-height="300px" v-loading="tableLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                            <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                            <el-table-column type="index" label="序号" width="55"> </el-table-column>
                             <el-table-column prop="name" label="名称"> </el-table-column>
                             <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
                             <el-table-column prop="siteAlias" label="别名">

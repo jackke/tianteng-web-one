@@ -1,10 +1,10 @@
 @ -1,5 +1,5 @@
 <template>
-   <dv-full-screen-container>
-        <div id="app">
+      <div id="app">
+          <dv-full-screen-container style="position: absolute;">
             <router-view />
-        </div>
-    </dv-full-screen-container>
+          </dv-full-screen-container>
+      </div>
 </template>
 <script>
 export default {
@@ -34,10 +34,9 @@ export default {
   #app {
     --font-smoothing: grayscale;
     color: #FFFFFF;
-    width: 100%;
-    height: 100%;
-    position: fixed;
-    z-index: inherit;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
   }
 
 </style>

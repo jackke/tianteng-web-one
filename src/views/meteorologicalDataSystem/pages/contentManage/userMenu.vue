@@ -3,7 +3,7 @@
     <div class="userMenu">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="角色名称：">
-               <el-input v-model="params.name" placeholder="请输入角色名称" clearable></el-input>
+               <el-input v-model.trim="params.name" placeholder="请输入角色名称" clearable></el-input>
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查询</el-button>
@@ -12,7 +12,7 @@
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
             <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="name" label="角色名称"> </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn"> </el-table-column>

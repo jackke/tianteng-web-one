@@ -1,12 +1,12 @@
 <!-- 用户管理 -->
 <template>
     <div class="userManage">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="工号ID：">
-                <el-input v-model="params.cardId" placeholder="请输入工号ID" clearable></el-input>
+                <el-input v-model.trim="params.cardId" placeholder="请输入工号ID" clearable></el-input>
             </el-form-item>
             <el-form-item label="用户名称：">
-                <el-input v-model="params.name" placeholder="请输入用户名称" clearable></el-input>
+                <el-input v-model.trim="params.name" placeholder="请输入用户名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="角色：" >
                 <el-select v-model="params.roleId" placeholder="请选择" popper-class="mars-select" style="width: 100px;">
@@ -29,7 +29,7 @@
 
        <div style="flex: 1;display: flex; flex-direction: column;">
             <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序" style="text-align: center;"> </el-table-column>
+                <el-table-column type="index" label="序号" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="cardId" label="工号ID"> </el-table-column>
                 <el-table-column prop="name" label="用户名称"> </el-table-column>
                 <el-table-column prop="roleId" label="角色" :formatter="roleIdFn"></el-table-column>

@@ -3,7 +3,7 @@
     <div class="columnConfiguration">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="站点别名：">
-                <el-input v-model="params.name" placeholder="请输入站点别名"></el-input>
+                <el-input v-model.trim="params.name" placeholder="请输入站点别名"></el-input>
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary">查 询</el-button>
@@ -13,7 +13,7 @@
 
        <div style="flex: 1;display: flex; flex-direction: column;">
             <el-table id="tablePrint" class="element-table" height="100%" :data="tableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="date" label="站点名称"> </el-table-column>
                 <el-table-column prop="date" label="站点别名"> </el-table-column>
                 <el-table-column prop="date" label="创建时间"> </el-table-column>
@@ -42,7 +42,7 @@
                 </el-form>
                 <el-table ref="siteTableDataRef" tooltip-effect="dark" @selection-change="handleSelectionChange" class="element-table" :data="siteTableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                     <el-table-column type="selection" width="55"> </el-table-column>
-                    <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                    <el-table-column type="index" label="序号" width="55"> </el-table-column>
                     <el-table-column prop="code" label="站点编号"> </el-table-column>
                     <el-table-column prop="name" label="站点名称"> </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
@@ -64,7 +64,7 @@
         <el-dialog title="站点设置：" class="column-dialog" :visible.sync="dialogVisibleSet" width="30%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div>
                 <el-table class="element-table" :data="siteSetTableData">
-                    <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                    <el-table-column type="index" label="序号" width="55"> </el-table-column>
                     <el-table-column prop="code" label="站点编号"> </el-table-column>
                     <el-table-column prop="name" label="站点名称"> </el-table-column>
                     <el-table-column prop="state" label="站点别名"> 
