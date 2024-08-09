@@ -141,7 +141,7 @@
                 <el-button size="medium" type="primary" :loading="dialogLoading" @click="submitRecalculate">确 定</el-button>
             </div>
         </el-dialog>
-        <el-dialog title="查看日志" top="5%" width="800px" :visible.sync="openlog" :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
+        <el-dialog title="查看日志" top="3%" width="800px" :visible.sync="openlog" :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
             <el-form :model="logForm" :rules="rules" ref="ruleForm" :inline="true" label-width="100px"  class="element-input" size="medium">
                 <el-form-item label="开始时间：" prop="startTime">
                     <el-date-picker
@@ -277,7 +277,13 @@ export default {
                     { required: true, message: '请输入站点名称', trigger: 'blur' },
                 ],
                 cron: [
-                    { required: true, message: '请输入cron', trigger: 'blur' },
+                    { required: true, 
+                        validator: (rule, value, callback) => {
+                            if (!this.ruleForm.cron){
+                                callback(new Error("请输入cron"))
+                            }
+                            callback();
+                        }, trigger: 'blur' },
                 ],
                 elementList: [
                     { required: true, 
@@ -338,11 +344,13 @@ export default {
                     tagList.push(row[key])
                 }
             }
+            console.log(row);
             this.ruleForm = {
                 name: row.typeName,
                 status: row.status || 1,
                 elementList: tagList,
-                id: row.id
+                id: row.id,
+                cron: row.cron,
             }
         },
         dataDelete(row){
@@ -433,13 +441,14 @@ export default {
         },
         /** 确定后回传值 */
          crontabFill(value) {
+            this.ruleForm.cron = value
             // this.ruleForm.dataList[this.cronListIndex].cron = value
             
         },
         dataRecalculate(row){
             this.recalculateForm = {
                 typeName: row.typeName,
-                id: row.id,
+                typeId: row.id,
                 startTime: '',
                 endTime: '',
             }
@@ -479,7 +488,8 @@ export default {
                     let data = {
                         typeName: this.ruleForm.name,
                         status: this.ruleForm.status,
-                        id: this.ruleForm.id
+                        id: this.ruleForm.id,
+                        cron: this.ruleForm.cron,
                     }
                     this.ruleForm.elementList.forEach((item, index) => {
                         data[`ele${index + 1}Name`] = item
@@ -581,6 +591,9 @@ export default {
 /deep/ .popup-main{
     background: transparent;
     color: #fff;
+}
+.el-dialog__wrapper{
+    height: 100vh;
 }
 
 </style>

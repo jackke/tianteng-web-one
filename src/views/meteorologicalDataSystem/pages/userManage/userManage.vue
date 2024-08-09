@@ -59,7 +59,7 @@
             <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
 
-        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="5%" :before-close="handleClose" :lock-scroll="true" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+        <el-dialog title="添加用户" :visible.sync="dialogVisible" width="35%" top="3%" :before-close="handleClose" :lock-scroll="true" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <!-- <span>这是一段信息</span> -->
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="150px" class="element-input" size="medium">
                 <el-form-item label="工号ID：" prop="cardId">
@@ -363,6 +363,9 @@ export default {
     .title-text >div:nth-last-child(1){
         border-bottom: 0;
     }
+}
+.el-dialog__wrapper{
+    height: 100vh;
 }
 
 </style>

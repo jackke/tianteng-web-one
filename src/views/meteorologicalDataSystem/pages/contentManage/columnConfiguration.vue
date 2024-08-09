@@ -197,7 +197,9 @@ export default {
         border-bottom: 0;
     }
 
-  
+    .el-dialog__wrapper{
+        height: 100vh;
+    }
 }
 
 </style>

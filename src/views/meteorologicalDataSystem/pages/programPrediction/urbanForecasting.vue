@@ -29,30 +29,31 @@
             </div>
        </div>
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table class="element-table" :data="tableData" max-height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle">
-                <el-table-column type="index" label="序号" width="55" v-if="tableDatakey.ele1" fixed></el-table-column>
+            <el-table class="element-table" :data="tableData" height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle">
+                <el-table-column type="index" label="序号" width="55" fixed></el-table-column>
+                <el-table-column prop="siteId" label="站点编号"> </el-table-column>
                 <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]">
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <div class="el-dialog dialog-print" v-show="dialogVisible">
-            <div id="tablePrint">
+       <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true">
+            <div id="tablePrint" style="width: 100%;">
                 <div class="title-text">
                     <div v-for="(item, index) in titleList" :key="index"> 
                         <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
                     </div>
                 </div>
-                <el-table class="element-table" height="600" :data="tableData" style="width: 100%">
+                <el-table class="element-table" :data="tableData" style="width: 100%">
                     <el-table-column type="index" label="序号" width="55"  v-if="tableDatakey.ele1" fixed></el-table-column>
-                    <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]" :width="`${tableDatakey[item].length * 10}`"></el-table-column>
+                    <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]"></el-table-column>
                 </el-table>
             </div>
             <div style="text-align: center;margin-top: 20px;">
                 <el-button  size="medium" @click="handleClose">取 消</el-button>
                 <el-button  size="medium" type="primary" @click="tablePrint">打 印</el-button>
             </div>
-       </div>
+       </el-dialog>
     </div>
 </template>
 <script>
@@ -139,6 +140,8 @@ export default {
                 }
             })
             this.tableData = []
+            this.params.tiem = ''
+            this.params.allItem = []
         },
         handleCurrentChange(page){
             this.params.pageNum = page
@@ -182,6 +185,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    overflow: auto;
     .element-button{
         padding: 20px;
         text-align: end;

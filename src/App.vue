@@ -1,7 +1,7 @@
 @ -1,5 +1,5 @@
 <template>
       <div id="app">
-          <dv-full-screen-container style="position: absolute;">
+          <dv-full-screen-container style="position: absolute;height: 100%;">
             <router-view />
           </dv-full-screen-container>
       </div>

@@ -198,8 +198,9 @@ export default {
 
 
 .commonTitle {
+    height: 100%;
     .titleContent {
-        height: 90px;
+        height: 90%;
         background-image: url('@/assets/image/commonTitle/heder-bg.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;

@@ -338,6 +338,9 @@ $_labelColor:#D8FBFD;
             color: #00E4FF;
         }
     }
+    .el-cascader-node:not(.is-disabled):focus, .el-cascader-node:not(.is-disabled):hover{
+        background-color:$_backColor;
+    }
 }
 
 /* 折叠面板 */

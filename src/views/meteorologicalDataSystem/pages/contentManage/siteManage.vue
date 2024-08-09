@@ -35,7 +35,7 @@
         </el-form>
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="导出选项：">
-                <el-radio-group v-model="exportStatue">
+                <el-radio-group v-model="exportStatue" @change="exportArray = []">
                     <el-radio :label="1">按结果</el-radio>
                     <el-radio :label="2">按配置</el-radio>
                 </el-radio-group>
@@ -139,6 +139,8 @@ export default {
             cascaderProps: { 
                 multiple: true,
                 lazy: true,
+                multiple: true, 
+                checkStrictly: false,
                 lazyLoad (node, resolve) {
                     const { level } = node;
                     if (level == 0){
@@ -152,7 +154,7 @@ export default {
                             if(res.code == 200) {
                                 let data = res.data.records || []
                                 let records = data.map(item => ({
-                                    value:  item.id,
+                                    value: item.id,
                                     label: item.name,
                                     ...item
                                 }))
@@ -168,7 +170,7 @@ export default {
                             channelName: '',
                             channelId: node.data.id,
                             name: "",
-                            status: '',
+                            status: 1,
                             pageNum: 1,
                             pageSize: 9999,
                         }
@@ -187,6 +189,9 @@ export default {
                                 _this.$message.error(res.message)
                             }
                         })
+                    }
+                    if (level == 2){
+                        resolve();
                     }
 
                 }
@@ -342,45 +347,64 @@ export default {
         },
         // 导出
         exportText(){
-            if (this.exportArray.length == 0){
+            if (this.exportStatue == 1 && this.params.name == '' && this.params.code == '') {
+                this.$message.error('请输入站点编号或者站点名称')
+                return false
+            }
+            if (this.exportArray.length == 0 && this.exportStatue == 2) {
                 this.$message.error('请选择频道和栏目')
                 return false
             }
+            let dataUrl = []
+            if (this.exportStatue == 1) {
+                let params = {...this.params, typeId: this.exportStatue}
+                dataUrl = [`${this.$api.server}/site/export`, params]
+            }
+            if (this.exportStatue == 2) {
+                let arr = this.exportArray.map(item => item[1])
+                dataUrl = [`${this.$api.server}/column/export`,{ arr: String(arr) }]
+            }
+            
             this.$confirm(`是否确认导出？`, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                let arr = this.exportArray.map(item => item[1])
-                this.$http.getFile(`${this.$api.server}/column/export`,{ arr: String(arr) }).then(res => {
-                    let data = res.data
-                    let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})
-                    let fileName = decodeURI(res.headers['content-disposition'])
-                    // console.log(fileName);
-                    // saveAs(blob, `${fileName}.xlsx`);
+                this.$http.getFile(...dataUrl).then(res => {
+                    console.log(res);
+                    if (res.status == 200) {
+                        let data = res.data
+                        let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+                        let fileName = decodeURI(res.headers['content-disposition'])
+                        // console.log(fileName);
+                        // saveAs(blob, `${fileName}.xlsx`);
 
-                    if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                        // 兼容IE，window.navigator.msSaveBlob：以本地方式保存文件
-                        window.navigator.msSaveBlob(blob, `${fileName}`)
-                    } else {
-                        // 创建新的URL并指向File对象或者Blob对象的地址
-                        const blobURL = window.URL.createObjectURL(blob)
-                        // 创建a标签，用于跳转至下载链接
-                        const tempLink = document.createElement('a')
-                        tempLink.style.display = 'none'
-                        tempLink.href = blobURL
-                        tempLink.setAttribute('download', `${fileName}`)
-                        // 兼容：某些浏览器不支持HTML5的download属性
-                        if (typeof tempLink.download === 'undefined') {
-                            tempLink.setAttribute('target', '_blank')
+                        if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                            // 兼容IE，window.navigator.msSaveBlob：以本地方式保存文件
+                            window.navigator.msSaveBlob(blob, `${fileName}`)
+                        } else {
+                            // 创建新的URL并指向File对象或者Blob对象的地址
+                            const blobURL = window.URL.createObjectURL(blob)
+                            // 创建a标签，用于跳转至下载链接
+                            const tempLink = document.createElement('a')
+                            tempLink.style.display = 'none'
+                            tempLink.href = blobURL
+                            tempLink.setAttribute('download', `${fileName}`)
+                            // 兼容：某些浏览器不支持HTML5的download属性
+                            if (typeof tempLink.download === 'undefined') {
+                                tempLink.setAttribute('target', '_blank')
+                            }
+                            // 挂载a标签
+                            document.body.appendChild(tempLink)
+                            tempLink.click()
+                            document.body.removeChild(tempLink)
+                            // 释放blob URL地址
+                            window.URL.revokeObjectURL(blobURL)
                         }
-                        // 挂载a标签
-                        document.body.appendChild(tempLink)
-                        tempLink.click()
-                        document.body.removeChild(tempLink)
-                        // 释放blob URL地址
-                        window.URL.revokeObjectURL(blobURL)
+                    } else {
+                        this.$message.error(res.message)
                     }
+                   
                 })
             }).catch(err => {})
         },

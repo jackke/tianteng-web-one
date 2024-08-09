@@ -40,10 +40,10 @@ export default {
   background-image: url(@/assets/image/bg.png);
   background-size: 100% 100%;
   .headTitle{
-    height: 10%;
+    height: 13%;
   }
   .content{
-    height: 90%;
+    height: 87%;
     overflow: hidden;
     margin: 5px 20px 20px 20px;
   }

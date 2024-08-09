@@ -36,17 +36,16 @@
                 <el-button icon="el-icon-receiving" type="success" @click="exportText">导出</el-button>
             </el-form-item>
         </el-form>
-        <div id="tablePrint" style="flex: 1;">
+        <div id="tablePrint" style="flex: 1; display: flex; flex-direction: column;">
             <div class="title-text">
                     <div v-for="(item, index) in titleList" :key="index"> 
                         <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
                     </div>
             </div>
-            <div style="height: 100%;display: flex; flex-direction: column">
+            <div style=" flex: 1;display: flex; flex-direction: column">
                     <!-- <div class="element-button"> <el-button size="medium" icon="el-icon-printer" type="primary" @click="tablePrint">打印</el-button></div> -->
-                    <el-table id="tablePrint" class="element-table" height="100%"  :data="tableData" style="width: 100%;flex: 1;" empty-text="请先选择“频道》栏目》时效”，数据查询">
+                    <el-table id="tablePrint" class="element-table" :data="tableData" style="flex: 1" empty-text="请先选择“频道》栏目》时效”，数据查询" :row-class-name="tableRowClassName">
                         <el-table-column type="index" label="序号" width="55" fixed> </el-table-column>
-                        <el-table-column prop="type" label="栏目" fixed> </el-table-column>
                         <el-table-column prop="siteId" label="站点编号" fixed> </el-table-column>
                         <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
                     </el-table>
@@ -204,7 +203,7 @@ export default {
                     this.reportTimeList = res.data.reportTimeList || []
                     this.tableEleName = res.data.eleName || {}
                     this.params.reportTimeList = [value.defaultReportTime]
-                    this.initData()
+                    // this.initData()
                 //    this.columnOptions = res.data.records || []
                 } else {
                     this.$message.error(res.message)
@@ -234,6 +233,12 @@ export default {
             //     // gridHeaderStyle: 'border: 1px solid #000;text-align:center',
             //     // gridStyle: 'border: 1px solid #000;text-align:center'
             // })
+        },
+        // element表格el-table对指定行设置背景颜
+        tableRowClassName({ row, rowIndex }){
+            if (row.state === 2){
+                return 'choose-row' 
+            }
         },
         // 导出
         exportText(){
@@ -308,20 +313,20 @@ export default {
     .title-text >div:nth-last-child(1){
         border-bottom: 0;
     }
-    .ul-li{
-        display: flex;
+    /deep/ .choose-row{
+        background-color: #8C3C3C !important;
     }
-    .ul-li li {
-        width: 50px;
-        height: 50px;
-        background: rgba(#000000, $alpha: .5);
-        &:hover{
-            cursor: text;
-        }
-        &:nth-child(n + 5){
-            background-color: red;
-        }
-    }
+    // .ul-li li {
+    //     width: 50px;
+    //     height: 50px;
+    //     background: rgba(#000000, $alpha: .5);
+    //     &:hover{
+    //         cursor: text;
+    //     }
+    //     &:nth-child(n + 5){
+    //         background-color: red;
+    //     }
+    // }
     .dialog-print{
         position: fixed;
         z-index: 99;

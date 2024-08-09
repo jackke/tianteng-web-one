@@ -191,7 +191,7 @@ $_color: #00E4FF;
                 width: 0;
                 height: 100%;
                 background-image: url(@/assets/image/menu-bg.png);
-                background-size: 98% 100%;
+                background-size: 100% 100%;
                 background-repeat: no-repeat;
             }
         }
