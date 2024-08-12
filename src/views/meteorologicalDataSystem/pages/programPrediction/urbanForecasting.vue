@@ -37,28 +37,29 @@
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true">
-            <div id="tablePrint" style="width: 100%;">
-                <div class="title-text">
-                    <div v-for="(item, index) in titleList" :key="index"> 
-                        <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+       <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :fullscreen="true" :show-close="false" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true">
+            <div style="display: flex; flex-direction: column; width: 100%;height: 100vh;">
+                <div id="tablePrint" style="flex: 1;">
+                    <div class="title-text">
+                        <div v-for="(item, index) in titleList" :key="index"> 
+                            <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+                        </div>
                     </div>
+                    <el-table class="element-table" :data="tableData">
+                        <el-table-column type="index" label="序号" width="55"  v-if="tableDatakey.ele1" fixed></el-table-column>
+                        <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]"></el-table-column>
+                    </el-table>
                 </div>
-                <el-table class="element-table" :data="tableData" style="width: 100%">
-                    <el-table-column type="index" label="序号" width="55"  v-if="tableDatakey.ele1" fixed></el-table-column>
-                    <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]"></el-table-column>
-                </el-table>
-            </div>
-            <div style="text-align: center;margin-top: 20px;">
-                <el-button  size="medium" @click="handleClose">取 消</el-button>
-                <el-button  size="medium" type="primary" @click="tablePrint">打 印</el-button>
-            </div>
+                <div style="text-align: center;margin-top: 20px;">
+                    <el-button  size="medium" @click="handleClose">取 消</el-button>
+                    <el-button  size="medium" type="primary" @click="tablePrint">打 印</el-button>
+                </div>
+            </div>    
        </el-dialog>
     </div>
 </template>
 <script>
 import ComPagination from '@/components/comPagination.vue'
-
 import $ from 'jquery'
 
 export default {
@@ -158,17 +159,9 @@ export default {
         tablePrint(){
             // this.dialogVisible = true;
             // return false
-            // $('#tablePrint').jqprint()
-            // window.print()
+            // $('#tablePrint').print()
+            window.print()
             // let style = '@page {}  @media print {.el-table__cell {text-align: left;padding:10px 0} .el-table .el-table__header tr th{padding-left:10px}'
-            // printJS({
-            //     printable: 'tablePrint',
-            //     type: 'html',
-            //     // style
-            //     // ignoreElements: 'elementButton'
-            //     // gridHeaderStyle: 'border: 1px solid #000;text-align:center',
-            //     // gridStyle: 'border: 1px solid #000;text-align:center'
-            // })
         },
         tableHeaderStyle(row, rowIndex){
             // let column = row.column

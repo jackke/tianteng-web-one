@@ -1,7 +1,7 @@
 @ -1,5 +1,5 @@
 <template>
       <div id="app">
-          <dv-full-screen-container style="position: absolute;height: 100%;">
+          <dv-full-screen-container style="position: absolute;height: 92%;">
             <router-view />
           </dv-full-screen-container>
       </div>
@@ -37,6 +37,7 @@ export default {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
 </style>

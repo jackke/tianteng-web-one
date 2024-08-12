@@ -36,15 +36,15 @@
                 <el-button icon="el-icon-receiving" type="success" @click="exportText">导出</el-button>
             </el-form-item>
         </el-form>
-        <div id="tablePrint" style="flex: 1; display: flex; flex-direction: column;">
+        <div id="tablePrint" style="flex: 1; display: flex; flex-direction: column;overflow-y: auto;">
             <div class="title-text">
                     <div v-for="(item, index) in titleList" :key="index"> 
                         <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
                     </div>
             </div>
-            <div style=" flex: 1;display: flex; flex-direction: column">
+            <div style="flex: 1;display: flex; flex-direction: column">
                     <!-- <div class="element-button"> <el-button size="medium" icon="el-icon-printer" type="primary" @click="tablePrint">打印</el-button></div> -->
-                    <el-table id="tablePrint" class="element-table" :data="tableData" style="flex: 1" empty-text="请先选择“频道》栏目》时效”，数据查询" :row-class-name="tableRowClassName">
+                    <el-table id="tablePrint" class="element-table" :data="tableData" height="100%" empty-text="请先选择“频道》栏目》时效”，数据查询" :row-class-name="tableRowClassName">
                         <el-table-column type="index" label="序号" width="55" fixed> </el-table-column>
                         <el-table-column prop="siteId" label="站点编号" fixed> </el-table-column>
                         <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>

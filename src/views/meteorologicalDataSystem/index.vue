@@ -153,6 +153,7 @@ $_color: #00E4FF;
         border: 1px solid rgba(0, 241, 251, 0.3);
         font-size: 14px;
         overflow: hidden;
+        overflow-y: auto;
         /deep/ .el-menu{
             background-color: transparent;
             border: 0;

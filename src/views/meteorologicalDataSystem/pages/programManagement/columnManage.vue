@@ -146,15 +146,15 @@
                     <el-form-item label="城市列表：" prop="siteList">
                         <div style="display: flex;">
                             <el-form-item   style="width: 50%;">
-                                <el-input v-model="siteValue" placeholder="请输入城市站点" clearable style="width: 70%;" @change="siteData(1)">
+                                <el-input v-model="siteValue" placeholder="城市站点" clearable style="width: 70%;" @change="siteData(1)">
                                     <el-button slot="append" size="medium" @click="siteData(1)" :loading="siteLoading">查询</el-button>
                                     <el-button slot="append" size="medium" type="primary" >导入</el-button>
                                 </el-input>
                                 <div style="color: #fff;"> 提示：请选择数据类型。 </div>
                             </el-form-item>
                             <el-form-item  label="设置别名：" style="width: 50%; margin:0;">
-                                <el-input v-model="propsName" placeholder="请输入设置别名" clearable style="width:75%">
-                                    <el-button slot="append" size="medium" type="primary" :disabled="siteRightTransferValue.length == 0" @click="propsClick">确定</el-button>
+                                <el-input v-model="propsName" placeholder="设置别名" clearable style="width:75%">
+                                    <el-button slot="append" size="medium" type="primary" @click="propsClick">确定</el-button>
                                 </el-input> 
                             </el-form-item>
                         </div>
@@ -553,6 +553,7 @@ export default {
             this.checkAll = false
             this.checkedCities = []
             this.stepsNum = 1
+            this.siteValue = ""
         },
         columnEdit(row, dialogVisible, num){
             this.type = 'edit'
@@ -989,6 +990,14 @@ export default {
         },
         // 站点别名
         propsClick(){
+            if (this.siteRightTransferValue.length == 0){
+                this.$message.error('请先根据已选城市选择站点')
+                return
+            }
+            if (!this.propsName){
+                this.$message.error('请输入站点别名')
+                return
+            }
             let rightList = this.$refs.refTransfer.$refs.rightPanel.data || []
             rightList.forEach(item => {
                 this.siteRightTransferValue.forEach(siteItem => {
