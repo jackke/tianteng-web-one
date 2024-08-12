@@ -32,15 +32,15 @@
                 <el-table-column type="index" label="序号" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="cardId" label="工号ID"> </el-table-column>
                 <el-table-column prop="name" label="用户名称"> </el-table-column>
-                <el-table-column prop="roleId" label="角色" :formatter="roleIdFn"></el-table-column>
-                <el-table-column prop="sex" label="性别">
+                <el-table-column prop="roleId" label="角色" :formatter="roleIdFn" width="100"></el-table-column>
+                <el-table-column prop="sex" label="性别" width="50">
                     <template slot-scope="scope">
                         {{ ['', '男', '女'][scope.row.sex] }}
                     </template>
                 </el-table-column>
-                <el-table-column prop="mobile" label="手机号"> </el-table-column>
+                <el-table-column prop="mobile" label="手机号" width="120"> </el-table-column>
                 <el-table-column prop="email" label="邮箱"> </el-table-column>
-                <el-table-column prop="state" label="状态">
+                <el-table-column prop="state" label="状态" width="80">
                     <template slot-scope="scope">
                         <span v-if="scope.row.state == 1" style="color: #23D26D;">已启用</span>
                         <span type="text" v-if="scope.row.state == 2" style="color: #F95555">已禁用</span>

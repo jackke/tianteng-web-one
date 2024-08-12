@@ -1,7 +1,7 @@
 <!-- 总表数据 -->
 <template>
     <div class="urbanForecasting">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="数据类型：">
                 <el-select v-model="params.type" placeholder="请选择数据类型" value-key="id" @change="typeChange" popper-class="mars-select">
                     <el-option v-for="(item) in typeOption" :key="item.id" :label="item.typeName" :value="item"></el-option>
@@ -23,12 +23,12 @@
                 <el-button icon="el-icon-printer" type="warning" @click="dialogVisible = true">打印</el-button>
             </el-form-item>
         </el-form>
-       <div class="title-text">
-            <div v-for="(item, index) in titleList" :key="index"> 
-                <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
-            </div>
-       </div>
        <div style="flex: 1;display: flex; flex-direction: column;">
+            <div class="title-text">
+                <div v-for="(item, index) in titleList" :key="index"> 
+                    <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+                </div>
+            </div>
             <el-table class="element-table" :data="tableData" height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle">
                 <el-table-column type="index" label="序号" width="55" fixed></el-table-column>
                 <el-table-column prop="siteId" label="站点编号"> </el-table-column>
@@ -178,7 +178,8 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow: auto;
+    overflow-y: auto;
+    box-sizing: border-box;
     .element-button{
         padding: 20px;
         text-align: end;

@@ -39,13 +39,17 @@ export default {
   flex-direction: column;
   background-image: url(@/assets/image/bg.png);
   background-size: 100% 100%;
+  box-sizing: border-box;
+
   .headTitle{
-    height: 13%;
+    height: 15%;
   }
   .content{
-    height: 87%;
-    overflow: hidden;
+    height: 85%;
+    // overflow: hidden;
     margin: 5px 20px 20px 20px;
+    box-sizing: border-box;
+
   }
 }
 

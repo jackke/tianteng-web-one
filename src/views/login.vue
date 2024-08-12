@@ -199,7 +199,7 @@ $--color: rgba(#00F0FF, 0.6);
             top: -5px;
         }
         input {
-            width: 100%;
+            // width: 100%;
             height: 40px;
             background: transparent;
             border: none;
@@ -207,6 +207,11 @@ $--color: rgba(#00F0FF, 0.6);
             color: #fff;
             // font-size: 1rem;
             padding: 0 35px 0 5px;
+        }
+        input:-webkit-autofill {
+            -webkit-text-fill-color: #fff !important; // 文字
+            -webkit-box-shadow: none !important; // 自动填充色
+            transition: background-color 5000s ease-in-out 0s;
         }
         .icon {
             position: absolute;
