@@ -95,6 +95,7 @@ export default {
         initData(){
             let params = {...this.params}
             params.reportTimeList = [...this.params.allItem]
+
             this.tableLoading = true
             this.$http.post(`${this.$api.server}/town/table/page`, params).then(res => {
                 this.tableLoading = false
@@ -123,10 +124,13 @@ export default {
                 }
             })
         },
+        // 数据类型选择
         typeChange(value){
             let list = this.typeOption.filter(item => item.id == value.id)
             this.reportTime = list[0].reportTime ?  list[0].reportTime.split(',') : []
             this.timeOptions = list[0].time ? list[0].time.split(',') : []
+            console.log(this.reportTime[0]);
+            
             this.params.type = value.typeName
             this.params.typeId = value.id
             this.$http.get(`${this.$api.server}/town/type/info/${value.id}`).then(res => {
@@ -142,7 +146,8 @@ export default {
             })
             this.tableData = []
             this.params.tiem = ''
-            this.params.allItem = []
+            this.params.allItem = [this.reportTime[0]] || []
+            // this.params.allItem = []
         },
         handleCurrentChange(page){
             this.params.pageNum = page

@@ -249,7 +249,7 @@ export default {
                         reportTimeList: String(this.params.reportTimeList)
                     }
                     this.$http.getFile(`${this.$api.server}/town/export`, params).then(res => {
-                        console.log(res);
+                        // console.log(res);
                         if (res.status == 200){
                             let data = res.data
                             let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})

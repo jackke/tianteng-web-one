@@ -21,26 +21,43 @@
             <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="typeName" label="数据名称"> </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
+                <el-table-column prop="fileName" label="文件名称"> </el-table-column>
+                <el-table-column prop="filePath" label="文件地址"> </el-table-column>
+                <!-- <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column> -->
                 <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
                 <el-table-column prop="state" label="状态">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.status == 1" style="color: #23D26D;">已启用</span>
-                        <span type="text" v-if="scope.row.status == 2" style="color: #F95555">已禁用</span>
+                        <span v-if="scope.row.state == 1" style="color: #23D26D;">已启用</span>
+                        <span type="text" v-if="scope.row.state == 2" style="color: #F95555">已禁用</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="340">
+                <el-table-column label="操作" width="420">
                     <template slot-scope="scope">
+                        <el-dropdown trigger="click" @command="(val) => handleCommand(val, scope.row)" popper-class="mars-select" :append-to-body="true"> 
+                            <el-button type="primary" size="small">
+                                更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown" size="small" popper-class="mars-select">
+                                <el-dropdown-item command="dataEdit">编辑</el-dropdown-item>
+                                <el-dropdown-item command="dataRecalculate">回算</el-dropdown-item>
+                                <el-dropdown-item command="datalog">日志</el-dropdown-item>
+                                <el-dropdown-item command="startStop-1" v-if="scope.row.state == 2" divided>启用</el-dropdown-item>
+                                <el-dropdown-item command="startStop-2" v-if="scope.row.state == 1" divided>禁用</el-dropdown-item>
+                                <el-dropdown-item command="dataDelete">删除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <!-- <el-button size="medium" type="danger" v-if="scope.row.state == 1" @click="stateClick(scope.row, 2)">禁用</el-button>
+                        <el-button size="medium" type="primary" v-if="scope.row.state == 2" @click="stateClick(scope.row, 1)">启用</el-button>
                         <el-button size="medium" type="primary" @click="dataRecalculate(scope.row)">回算</el-button>
                         <el-button size="medium" type="primary" @click="datalog(scope.row)">日志</el-button>
                         <el-button size="medium" type="primary" @click="dataEdit(scope.row)">编辑</el-button>
-                        <el-button size="medium" type="danger" @click="dataDelete(scope.row)">删除</el-button>
+                        <el-button size="medium" type="danger" @click="dataDelete(scope.row)">删除</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="编辑站点" :visible.sync="dialogVisible" width="40%" :before-close="dataDialogClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+       <el-dialog title="编辑数据类型" :visible.sync="dialogVisible" width="40%" :before-close="dataDialogClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"  class="element-input">
                 <el-form-item label="数据名称：" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入数据名称"></el-input>
@@ -59,7 +76,12 @@
                         v-for="tag in ruleForm.elementList">{{tag}}</el-tag>
                     </div>
                 </el-form-item>
-               
+                <el-form-item label="文件名称：" prop="fileName">
+                    <el-input v-model="ruleForm.fileName" placeholder="请输入文件名称。如：filename[MM][DD][HH].[FFF]"></el-input>
+                </el-form-item>
+                <el-form-item label="文件地址：" prop="filePath">
+                    <el-input v-model="ruleForm.filePath" placeholder="请输入文件地址"></el-input>
+                </el-form-item>
                 <!-- <el-form-item label="元素名称：" prop="elementList" >
                     <div class="tag-element">
                         <draggable v-model="ruleForm.elementList">
@@ -231,6 +253,8 @@ export default {
                 code: '',
                 name: '',
                 cron: '',
+                fileName: '',
+                filePath: '',
                 status: 1,
                 elementList: [],
             },
@@ -275,6 +299,12 @@ export default {
                 ],
                 name: [
                     { required: true, message: '请输入站点名称', trigger: 'blur' },
+                ],
+                fileName: [
+                    { required: true, message: '请输入文件名称', trigger: 'blur' },
+                ],
+                filePath: [
+                    { required: true, message: '请输入文件地址', trigger: 'blur' },
                 ],
                 cron: [
                     { required: true, 
@@ -351,6 +381,8 @@ export default {
                 elementList: tagList,
                 id: row.id,
                 cron: row.cron,
+                fileName: row.fileName,
+                filePath: row.filePath,
             }
         },
         dataDelete(row){
@@ -381,6 +413,7 @@ export default {
             //     confirmButtonText: '确定',
             // }).then(() =>{});
         },
+        // 日志
         datalog(row){
             this.openlog = true
             var year = new Date().getFullYear();  //获取年
@@ -393,7 +426,7 @@ export default {
         },
         initLog(){
             this.tableLogLoading = true
-            this.$http.post(`http://192.168.1.61:8004/hfFileParsingLogsPO/page`, this.logForm).then(res => {
+            this.$http.post(`${this.$api.server}/hfFileParsingLogsPO/page`, this.logForm).then(res => {
                 if(res.code == 200) {
                     this.tableLog = res.data.records || []
                     this.totalLog = res.data.total
@@ -443,7 +476,38 @@ export default {
          crontabFill(value) {
             this.ruleForm.cron = value
             // this.ruleForm.dataList[this.cronListIndex].cron = value
-            
+        },
+        handleCommand(value, row){
+            console.log(value);
+            if (value.match(/startStop/)){
+                let state = value.split('-')[1]
+                this.stateClick(row, state);
+            } else {
+                this[value](row);
+            }
+        },
+        // 禁用 启用
+        stateClick(row, state){
+            let title = ['', '启用', '禁用'][state]
+            this.$confirm(`是否确认 “${title}” 该数据类型？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let data = {
+                    state,
+                    id: row.id,
+                    xxlId: row.xxlId
+                }
+                this.$http.post(`${this.$api.server}/town/stop`, data).then(res => {
+                    if(res.code == 200) {
+                        this.initData()
+                        this.$message({ message: `${title}成功`, type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
+            }).catch(err => {})
         },
         dataRecalculate(row){
             this.recalculateForm = {

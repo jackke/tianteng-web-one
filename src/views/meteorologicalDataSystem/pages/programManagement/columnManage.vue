@@ -787,7 +787,7 @@ export default {
                         })
                         data.siteList = siteRef
                     }
-                    if (status == 2){ 
+                    if (status == 2 || status == 3){ 
                         let checkedCitiesList = this.checkedCities.map(item => item.key)
                         // 项目要素 参数
                         data.element = String(checkedCitiesList)
