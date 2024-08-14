@@ -21,7 +21,7 @@ module.exports = defineConfig({
       //   secure: false // 设置支持https协议的代理
       // },
       '/server' : {
-        target: 'http://192.168.1.61:8004',
+        target: 'http://192.168.1.253:8099',
         pathRewrite: { '^/server': '' },
         changeOrigin: true, // target 是域名的话，需要这个参数
         secure: false // 设置支持https协议的代理

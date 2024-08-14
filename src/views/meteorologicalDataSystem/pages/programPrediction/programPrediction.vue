@@ -198,7 +198,7 @@ export default {
         columnChange(value){
             console.log(value);
             this.params.columnId = value.id
-            this.$http.get(`${this.$api.server}column/info/${value.id}`).then(res => {
+            this.$http.get(`${this.$api.server}/column/info/${value.id}`).then(res => {
                 if(res.code == 200) {
                     this.reportTimeList = res.data.reportTimeList || []
                     this.tableEleName = res.data.eleName || {}

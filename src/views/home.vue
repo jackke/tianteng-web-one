@@ -42,10 +42,10 @@ export default {
   box-sizing: border-box;
 
   .headTitle{
-    height: 15%;
+    height: 12vh;
   }
   .content{
-    height: 85%;
+    height: 88vh;
     // overflow: hidden;
     margin: 5px 20px 20px 20px;
     box-sizing: border-box;

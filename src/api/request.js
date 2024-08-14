@@ -30,7 +30,8 @@ server.interceptors.request.use(
     if (config.method == "post" && config.data instanceof FormData) {
       config.headers['Content-Type'] = "multipart/form-data"
     }
-  
+    // 在发送请求之前做些什么
+    // console.log(config, '在发送请求之前做些什么');
     return config;
   },
   function (error) {
