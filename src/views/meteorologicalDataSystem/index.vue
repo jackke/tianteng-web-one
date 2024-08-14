@@ -140,9 +140,9 @@ $_color: #00E4FF;
         box-sizing: border-box;
         width: 80%;
         flex: 1;
+        padding: 20px;
         .content-right-box{
-            margin: 20px;
-            height: 95%;
+            height: 100%;
         }
     }
     // menu

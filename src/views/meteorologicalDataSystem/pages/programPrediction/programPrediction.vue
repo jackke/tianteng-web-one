@@ -296,6 +296,7 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
     .title-text >div{
         display: flex;
         padding: 10px 0;

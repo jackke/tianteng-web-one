@@ -103,6 +103,7 @@ export default {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
+                        this.total = res.data.total || 0
                     } else {
                         this.$message.error(res.message)
                     }

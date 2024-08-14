@@ -1,7 +1,7 @@
 <!-- 栏目管理 -->
 <template>
     <div class="columnManage">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="频道名称：">
                 <el-autocomplete
                     class="inline-input"

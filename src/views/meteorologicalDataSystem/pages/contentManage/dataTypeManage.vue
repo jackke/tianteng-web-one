@@ -24,14 +24,14 @@
                 <el-table-column prop="fileName" label="文件名称"> </el-table-column>
                 <el-table-column prop="filePath" label="文件地址"> </el-table-column>
                 <!-- <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column> -->
-                <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
-                <el-table-column prop="state" label="状态">
+                <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn" width="180"> </el-table-column>
+                <el-table-column prop="state" label="状态" width="120">
                     <template slot-scope="scope">
                         <span v-if="scope.row.state == 1" style="color: #23D26D;">已启用</span>
                         <span type="text" v-if="scope.row.state == 2" style="color: #F95555">已禁用</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="420">
+                <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
                         <el-dropdown trigger="click" @command="(val) => handleCommand(val, scope.row)" popper-class="mars-select" :append-to-body="true"> 
                             <el-button type="primary" size="small">

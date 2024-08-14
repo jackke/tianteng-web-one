@@ -1,7 +1,7 @@
 <!-- 频道管理 -->
 <template>
     <div class="channelManage">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="频道名称：">
                 <el-input v-model="params.description" placeholder="请输入频道名称" clearable></el-input>
             </el-form-item>
