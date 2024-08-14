@@ -119,7 +119,7 @@
                     </div>
                 </div>
                 <div v-show="stepsNum == 2">
-                    <el-form-item label="项目列表：" prop="element">
+                    <el-form-item label="项目列表：" prop="element" key="element">
                         <div style="color: #fff;">提示：请选择数据类型。</div>
                         <!-- <el-checkbox-group v-model="ruleForm.element">
                             <el-checkbox v-for="(item, index) in listElement" :key="index" :label="item.value" name="type">{{ item.name }}</el-checkbox>
@@ -251,8 +251,8 @@
                         </el-form>
                     </el-descriptions-item>
                 </el-descriptions>
-                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input" size="medium">
-                    <el-form-item prop="element">
+                 <el-form ref="ruleForm" class="element-input" size="medium">
+                    <el-form-item required>
                          <div style="color:#fff" >
                             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
                             <div style="margin: 15px 0;"></div>
@@ -279,7 +279,7 @@
                 </div>
             <div slot="footer" style="text-align: center;">
                 <el-button size="medium" @click="handleClose">取 消</el-button>
-                <el-button size="medium" type="primary" @click="submitForm(2)" :loading="dialogLoading">确 认</el-button>
+                <el-button size="medium" type="primary" @click="submitFormElement" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
          <!-- 城市站点 -->
@@ -295,16 +295,16 @@
                         <el-input v-model="siteValue" placeholder="请输入站点名称" clearable style="width: 240px;" @change="siteData(2)"> </el-input>
                         <el-input v-model="siteCode" placeholder="请输入站点编号" clearable style="width: 240px;" @change="siteData(2)"> </el-input>
                         <el-button type="primary" @click="siteData" style="margin-left: 10px;" :loading='siteLoading'>查 询</el-button>
-                        <el-button type="primary" >导 入</el-button>
+                        <el-button type="primary" @click="dialogVisibleSiteExport = true">导 入</el-button>
                     </el-form-item>
                     <el-form-item >
-                        <el-table ref="tableSiteList" class="element-table" max-height="300px" v-loading="tableLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                        <el-table ref="tableSiteList" class="element-table" max-height="300px" v-loading="siteLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                             <el-table-column type="index" label="序号" width="55"> </el-table-column>
                             <el-table-column prop="name" label="名称"> </el-table-column>
                             <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
                             <el-table-column prop="siteAlias" label="别名">
                                 <template slot-scope="props">
-                                    <el-input v-model="props.row.siteAlias" placeholder="请输入站点别名" clearable> </el-input>
+                                    <el-input v-model.trim="props.row.siteAlias" placeholder="请输入站点别名" clearable> </el-input>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -335,6 +335,31 @@
             <div slot="footer" style="text-align: center;">
                 <el-button size="medium" @click="handleClose">取 消</el-button>
                 <el-button size="medium" type="primary" @click="submitSiteSort" :loading="dialogLoading">确 认</el-button>
+            </div>
+        </el-dialog>
+        <!-- 城市站点 导入 -->
+         <el-dialog title="站点导入" :visible.sync="dialogVisibleSiteExport" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+                 <el-form class="element-input" size="medium">
+                    <el-form-item label="文件列表：">
+                        <el-upload
+                            style="margin: 0 10px;"
+                            ref="formFile"
+                            class="upload-demo"
+                            action="#"
+                            :auto-upload="false"
+                            :limit="1"
+                            :file-list="fileList"
+                            :on-change="handleAvatarSuccess"
+                            :on-remove="handleAvatarRemove"
+                            >
+                            <el-button icon="el-icon-folder-opened" type="success">选取文件</el-button>
+                            <div slot="tip" class="el-upload__tip" style="color: #eee;">站点只能上传xls/xlsx文件，且最大上传数量 1</div>
+                        </el-upload>
+                    </el-form-item>
+                </el-form>
+            <div slot="footer" style="text-align: center;">
+                <el-button size="medium" @click="dialogVisibleSiteExport = false; fileList = []">取 消</el-button>
+                <el-button size="medium" type="primary" @click="submitSiteExport" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
         <!--  编辑列表 -->
@@ -421,6 +446,8 @@ export default {
             dialogVisibleOne: false,
             dialogVisibleElement: false,
             dialogVisibleSite: false,
+            dialogVisibleSiteExport: false,
+            fileList: [],
             isIndeterminate: false,
             siteLoading: false,
             ruleForm:{
@@ -468,6 +495,8 @@ export default {
                 element: [
                     { required: true,
                         validator: (rule, value, callback) => {
+                            // console.log(this.ruleForm.element);
+                            // console.log(this.checkedCities, 'this.checkedCities');
                             if (this.ruleForm.element.length == 0){
                                 callback(new Error('请选择项目'))
                             }
@@ -557,8 +586,8 @@ export default {
         },
         columnEdit(row, dialogVisible, num){
             this.type = 'edit'
-            this.townTypeChange(row.townTypeId)
             this[dialogVisible] = true
+            this.townTypeChange(row.townTypeId)
             this.$http.get(`${this.$api.server}/column/info/${row.id}`).then(res => {
                 if(res.code == 200) {
                     // 找到transferEleList 原型对象 才能返显
@@ -574,9 +603,10 @@ export default {
                             }
                         })
                     })
+
                      // 2、城市
                     let siteList = res.data.siteList.map(item => item.siteId)
-                    
+                    this.copySiteList = res.data.siteList.map(item => item)
                     this.ruleForm = {
                         ...res.data,
                         siteList,
@@ -586,15 +616,6 @@ export default {
                     this.checkedCities = checkedCities
                     this.handleCheckedCitiesChange(checkedCities)
 
-                    // setTimeout(() => {
-                    //     this.transferSiteList.forEach(item => {
-                    //         res.data.siteList.forEach(sitem => {
-                    //             if (item.id == sitem.siteId){
-                    //                 item.siteAlias = sitem.siteAlias
-                    //             }
-                    //         })
-                    //     })
-                    // },1000)
 
                     // 站点
                     if (num == 4){
@@ -608,7 +629,6 @@ export default {
         },
         stepsClick(){
             this.$refs['ruleForm'].validateField(['channelName', 'name', 'townTypeId', 'townType'],(valid) => {
-                console.log(valid);
                 let that = this
                 clearTimeout(this.times)
                 this.times = setTimeout(() => {
@@ -665,17 +685,18 @@ export default {
                 this.$message.error('请输入站点别名');
                 return false
             }
-            console.log(this.ruleForm);
             this.dialogLoading = true
             let params = {
                 ...row,
                 siteId: row.id,
                 columnId: this.ruleForm.id,
             }
+            let data = {...row, siteAlias: `${row.siteAlias}（${row.name}）`}
             this.$http.post(`${this.$api.server}/columnsite/save`, params).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
-                    this.multipleSelection.push(row);
+                    data.id = res.data
+                    this.multipleSelection.push(data);
                 } else {
                     this.$message.error(res.message)
                 }
@@ -752,7 +773,6 @@ export default {
         },
         // 更多操作
         handleCommand(val, row){
-            console.log(val, row);
             if (val == 'columnDelete' || val == 'columnTransfer') {
                 this[val](row)
             } else {
@@ -764,6 +784,35 @@ export default {
                 }
                 this.columnEdit(row, val, column[val])
             }
+        },
+        handleAvatarRemove(){
+            this.fileList = []
+        },
+        handleAvatarSuccess(file, fileList){
+            this.fileList = fileList
+        },
+        // 项目元素编辑
+        submitFormElement(){
+            if (this.checkedCities.length == 0){
+                this.$message({ message: '请选择元素项目', type: 'error' })
+                return false;
+            }
+            let data = {...this.ruleForm,  userId: this.$store.state.userId}
+            let checkedCitiesList = this.checkedCities.map(item => item.key)
+            // 项目要素 参数
+            data.element = String(checkedCitiesList)
+            data.siteList = this.copySiteList
+            this.dialogLoading = true
+            this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
+                this.dialogLoading = false
+                if(res.code == 200) {
+                    this.initData()
+                    this.handleClose()
+                    this.$message({ message: '修改成功', type: 'success' })
+                } else {
+                    this.$message.error(res.message)
+                }
+            })
         },
         // 编辑新建 按钮
         submitForm(status){
@@ -787,10 +836,11 @@ export default {
                         })
                         data.siteList = siteRef
                     }
-                    if (status == 2 || status == 3){ 
+                    if (status == 3){ 
                         let checkedCitiesList = this.checkedCities.map(item => item.key)
                         // 项目要素 参数
                         data.element = String(checkedCitiesList)
+                        data.siteList = this.copySiteList
                      }
                     if (this.type == 'edit'){
                         this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
@@ -818,17 +868,33 @@ export default {
                 } 
             })
         },
+        // 城市站点 导入确认
+        submitSiteExport(){
+            if (this.fileList.length == 0){
+                this.$message.error('请上传文件');
+                return false
+            }
+            let formData = new FormData()
+            formData.append('file', this.fileList[0].raw)
+            formData.append('id', this.ruleForm.id)
+            this.$http.post(`${this.$api.server}/column/importsite`, formData).then(res => {
+                if(res.code == 200) {
+                    this.dialogVisibleSiteExport = false
+                    this.$message({ message: '导入成功', type: 'success' })
+                } else {
+                    this.$message.error(res.message)
+                }
+            })
+        },
         // 城市站点添加
         submitSiteSort(){
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
-                    console.log(123123,  this.multipleSelection, this.ruleForm);
+                    this.dialogLoading = true
                     let data = {
                         columnId: this.ruleForm.id,
                         sortIds: this.multipleSelection.map(item => item.id)
                     }
-
-                    this.dialogLoading = true
                     this.$http.post(`${this.$api.server}/columnsite/sort`, data).then(res => {
                         this.dialogLoading = false
                         if(res.code == 200) {
@@ -871,7 +937,7 @@ export default {
             // this.siteData('')
             /** 时次类型 **/
             let obj = this.typeOption.find(item => item.id == value)
-            this.ruleForm.timeType = ''
+            // this.ruleForm.timeType = ''
             if (obj.time){
                 this.timeOption = obj.time.split(',')
             }
@@ -960,7 +1026,6 @@ export default {
                 pageNum: 1,
                 pageSize: 99999,
             }
-            console.log(this.$refs.refTransfer);
             if (siteStstus == 1){
                 this.copySiteList =  this.$refs.refTransfer.$refs.rightPanel.data || []
             }
@@ -1046,6 +1111,10 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    /deep/ .el-upload-list__item{
+       background-color: #fff;
+       padding: 10px 0;
+    }
 }
 .list-sort{
     text-align: center;
@@ -1093,6 +1162,7 @@ export default {
     /deep/ .el-transfer-panel{
         width: 35% !important;
     }
+ 
     .button-s{
         width: 50px;
         position: absolute;
