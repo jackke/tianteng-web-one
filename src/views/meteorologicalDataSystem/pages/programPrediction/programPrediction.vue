@@ -32,7 +32,7 @@
             </el-form-item> 
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查询</el-button>
-                <el-button icon="el-icon-printer" type="warning" @click="tablePrint">打印</el-button>
+                <el-button icon="el-icon-printer" type="warning" @click="dialogVisible = true">打印</el-button>
                 <el-button icon="el-icon-receiving" type="success" @click="exportText">导出</el-button>
             </el-form-item>
         </el-form>
@@ -42,39 +42,36 @@
                         <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
                     </div>
             </div>
-            <div style="flex: 1;display: flex; flex-direction: column">
+            <div style="flex: 1;display: flex; flex-direction: column; ">
                     <!-- <div class="element-button"> <el-button size="medium" icon="el-icon-printer" type="primary" @click="tablePrint">打印</el-button></div> -->
                     <el-table id="tablePrint" class="element-table" :data="tableData" height="100%" empty-text="请先选择“频道》栏目》时效”，数据查询" :row-class-name="tableRowClassName">
                         <el-table-column type="index" label="序号" width="55" fixed> </el-table-column>
                         <el-table-column prop="siteId" label="站点编号" fixed> </el-table-column>
                         <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
                     </el-table>
-                    <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
             </div>
         </div>
-       <!-- <div class="el-dialog dialog-print" v-show="dialogVisible">
-            <div id="tablePrint">
-                <div class="title-text">
-                    <div v-for="(item, index) in titleList" :key="index"> 
-                        <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+        <div style="padding-top: 10px; position: absolute; width: 100%; bottom: 0; left:0; z-index: 9; background: #102041;">
+            <ComPagination :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
+        </div>
+        <el-dialog  :visible.sync="dialogVisible" :fullscreen="true" :before-close="handleClose" :modal-append-to-body="false" :append-to-body="false">
+                <div id="tablePrint">
+                    <div class="title-text">
+                        <div v-for="(item, index) in titleList" :key="index"> 
+                            <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+                        </div>
                     </div>
+                    <el-table class="element-table" :data="tableData" style="width: 100%;" empty-text="请先选择“频道》栏目》时效”，数据查询">
+                        <el-table-column type="index" label="序号" width="55" fixed> </el-table-column>
+                        <el-table-column prop="type" label="栏目" fixed> </el-table-column>
+                        <el-table-column prop="siteId" label="站点编号" fixed> </el-table-column>
+                        <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
+                    </el-table>
                 </div>
-                <el-table id="tablePrint" class="element-table" height="100%"  :data="tableData" style="width: 100%;flex: 1;" empty-text="请先选择“频道》栏目》时效”，数据查询">
-                    <el-table-column type="index" label="序号" width="55" fixed> </el-table-column>
-                    <el-table-column prop="type" label="栏目" fixed> </el-table-column>
-                    <el-table-column prop="siteId" label="站点编号" fixed> </el-table-column>
-                    <el-table-column v-for="(item, index) in Object.keys(tableEleName)" min-width="120" :key="index" :prop="item" :label="tableEleName[item]"></el-table-column>
-                </el-table>
-            </div>
-            <div style="text-align: center;margin-top: 20px;">
-                <el-button  size="medium" @click="dialogVisible = false">取 消</el-button>
-                <el-button  size="medium" type="primary" @click="tablePrint">打 印</el-button>
-            </div>
-       </div> -->
+        </el-dialog>
     </div>
 </template>
 <script>
-// import printJS from 'print-js'
 import ComPagination from '@/components/comPagination.vue'
 import $ from 'jquery'
 
@@ -213,7 +210,8 @@ export default {
         },
         // 打印 
          tablePrint(){
-            $('#tablePrint').jqprint()
+            this.dialogVisible = true
+            // $('#tablePrint').jqprint()
             // window.print()
             // let style = '@page {margin: 0 10mm}'
             // let style = '@page {}  @media print {.el-table__cell {text-align: left;padding:10px 0} .el-table .el-table__header tr th{padding-left:10px} .el-table__row:nth-child(3){background-color:red}'
@@ -234,6 +232,9 @@ export default {
             //     // gridStyle: 'border: 1px solid #000;text-align:center'
             // })
         },
+        handleClose(){
+            this.dialogVisible = false
+        },
         // element表格el-table对指定行设置背景颜
         tableRowClassName({ row, rowIndex }){
             if (row.state === 2){
@@ -244,46 +245,51 @@ export default {
         exportText(){
             this.$refs['params'].validate((valid) => {
                 if (valid) {
-                    let params = {
-                        columnId: this.params.columnId,
-                        reportTimeList: String(this.params.reportTimeList)
-                    }
-                    this.$http.getFile(`${this.$api.server}/town/export`, params).then(res => {
-                        // console.log(res);
-                        if (res.status == 200){
-                            let data = res.data
-                            let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})
-                            let fileName = decodeURI(res.headers['content-disposition'])
-                            // console.log(fileName);
-                            // saveAs(blob, `${fileName}.xlsx`);
-
-                            if (typeof window.navigator.msSaveBlob !== 'undefined') {
-                                // 兼容IE，window.navigator.msSaveBlob：以本地方式保存文件
-                                window.navigator.msSaveBlob(blob, `${fileName}`)
-                            } else {
-                                // 创建新的URL并指向File对象或者Blob对象的地址
-                                const blobURL = window.URL.createObjectURL(blob)
-                                // 创建a标签，用于跳转至下载链接
-                                const tempLink = document.createElement('a')
-                                tempLink.style.display = 'none'
-                                tempLink.href = blobURL
-                                tempLink.setAttribute('download', `${fileName}`)
-                                // 兼容：某些浏览器不支持HTML5的download属性
-                                if (typeof tempLink.download === 'undefined') {
-                                    tempLink.setAttribute('target', '_blank')
-                                }
-                                // 挂载a标签
-                                document.body.appendChild(tempLink)
-                                tempLink.click()
-                                document.body.removeChild(tempLink)
-                                // 释放blob URL地址
-                                window.URL.revokeObjectURL(blobURL)
-                            }
-                        } else {
-                            this.$message.error(res.message)
+                    this.$confirm('是否确认导出？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        let params = {
+                            columnId: this.params.columnId,
+                            reportTimeList: String(this.params.reportTimeList)
                         }
-                        
-                    })
+                        this.$http.getFile(`${this.$api.server}/town/export`, params).then(res => {
+                            // console.log(res);
+                            if (res.status == 200){
+                                let data = res.data
+                                let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})
+                                let fileName = decodeURI(res.headers['content-disposition'])
+                                // console.log(fileName);
+                                // saveAs(blob, `${fileName}.xlsx`);
+
+                                if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                                    // 兼容IE，window.navigator.msSaveBlob：以本地方式保存文件
+                                    window.navigator.msSaveBlob(blob, `${fileName}`)
+                                } else {
+                                    // 创建新的URL并指向File对象或者Blob对象的地址
+                                    const blobURL = window.URL.createObjectURL(blob)
+                                    // 创建a标签，用于跳转至下载链接
+                                    const tempLink = document.createElement('a')
+                                    tempLink.style.display = 'none'
+                                    tempLink.href = blobURL
+                                    tempLink.setAttribute('download', `${fileName}`)
+                                    // 兼容：某些浏览器不支持HTML5的download属性
+                                    if (typeof tempLink.download === 'undefined') {
+                                        tempLink.setAttribute('target', '_blank')
+                                    }
+                                    // 挂载a标签
+                                    document.body.appendChild(tempLink)
+                                    tempLink.click()
+                                    document.body.removeChild(tempLink)
+                                    // 释放blob URL地址
+                                    window.URL.revokeObjectURL(blobURL)
+                                }
+                            } else {
+                                this.$message.error(res.message)
+                            }
+                        })
+                    }).catch(err => {})
                 }
             })
         }
@@ -297,6 +303,8 @@ export default {
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
+    position: relative;
+    padding-bottom: 50px;
     .title-text >div{
         display: flex;
         padding: 10px 0;
@@ -317,6 +325,10 @@ export default {
     /deep/ .choose-row{
         background-color: #8C3C3C !important;
     }
+    /deep/ .el-dialog .el-dialog__header{
+        border: 0;
+        padding: 5px;
+    }
     // .ul-li li {
     //     width: 50px;
     //     height: 50px;
@@ -328,16 +340,6 @@ export default {
     //         background-color: red;
     //     }
     // }
-    .dialog-print{
-        position: fixed;
-        z-index: 99;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow-y: auto;
-        padding: 30px;
-    }
 }
 
 </style>

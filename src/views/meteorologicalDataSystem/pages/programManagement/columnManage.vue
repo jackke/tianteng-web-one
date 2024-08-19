@@ -72,10 +72,10 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
+            <ComPagination style="margin-top: 10px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
          <!--  编辑栏目 -->
-        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" top="5%" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :top="channelTop" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <div v-show="stepsNum == 1">
                     <el-form :model="ruleFormColumn" :rules="rules" ref="ruleFormColumn" label-width="100px" class="element-input" size="medium">
                         <el-form-item label="频道名称：" prop="channelName" >
@@ -191,7 +191,7 @@
                     </el-form>
                     <div slot="footer" style="text-align: center;">
                         <el-button size="medium" @click="handleClose">取 消</el-button>
-                        <el-button size="medium" type="primary" @click="stepsNum = 1">上一步</el-button>
+                        <el-button size="medium" type="primary" @click="channelTop = '5%', stepsNum = 1">上一步</el-button>
                         <el-button size="medium" type="primary" @click="submitForm(1)" :loading="dialogLoading">确 认</el-button>
                     </div>
                 </div>
@@ -285,7 +285,7 @@
             </div>
         </el-dialog>
          <!-- 城市站点 -->
-         <el-dialog title="站点列表" :visible.sync="dialogVisibleSite" width="50%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+         <el-dialog title="站点列表" :visible.sync="dialogVisibleSite" width="50%" top="1%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <el-descriptions :column="2">
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{ ruleForm.name}}</el-descriptions-item>
@@ -294,9 +294,9 @@
                 </el-descriptions>
                  <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input" size="medium">
                     <el-form-item label="城市站点：">
-                        <el-input v-model="siteValue" placeholder="请输入站点名称" clearable style="width: 240px;" @change="siteData(2)"> </el-input>
-                        <el-input v-model="siteCode" placeholder="请输入站点编号" clearable style="width: 240px;" @change="siteData(2)"> </el-input>
-                        <el-button type="primary" @click="siteData" style="margin-left: 10px;" :loading='siteLoading'>查 询</el-button>
+                        <el-input v-model="siteDataListParams.name" placeholder="请输入站点名称" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
+                        <el-input v-model="siteDataListParams.code" placeholder="请输入站点编号" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
+                        <el-button type="primary" @click="initSiteDataList" style="margin-left: 10px;" :loading='siteLoading'>查 询</el-button>
                         <el-button type="primary" @click="dialogVisibleSiteExport = true">导 入</el-button>
                     </el-form-item>
                     <el-form-item >
@@ -315,6 +315,7 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <ComPagination style="margin-top: 10px;" @current-change="siteListCurrentChange" @size-change="siteListSizeChange" :total="siteListTotal"></ComPagination>
                     </el-form-item>
                 </el-form>
                 <el-divider></el-divider>
@@ -442,6 +443,7 @@ export default {
             tableData: [],
             tableDataSort: [],
             multipleSelection: [],
+            channelTop: '5%',
             dialogVisible: false,
             dialogVisibleSort: false,
             dialogVisibleTransfer: false,
@@ -475,6 +477,15 @@ export default {
             transferForm:{
                 channelName: '',
                 channelId: '',
+            },
+            siteListTotal: 0,
+            siteDataListParams: {
+                name: '',
+                code: '',
+                columnId: '',
+                status: 1,
+                pageNum: 1,
+                pageSize: 10,
             },
             times: null,
             transferEleList:[],
@@ -591,6 +602,7 @@ export default {
             this.dialogVisibleSite = false
             this.checkAll = false
             this.checkedCities = []
+            this.transferSiteList = []
             this.stepsNum = 1
             this.siteValue = ""
         },
@@ -600,38 +612,36 @@ export default {
             this.townTypeChange(row.townTypeId)
             this.$http.get(`${this.$api.server}/column/info/${row.id}`).then(res => {
                 if(res.code == 200) {
+                    this.ruleForm = {...res.data}
                     // 找到transferEleList 原型对象 才能返显
-                    // 1、 项目
-                    let keyList = []
-                    let checkedCities = []
-                    let keyArr = (res.data.element).split(',')
-                    keyArr.forEach(items => {
-                        this.transferEleList.forEach(item => {
-                            if (item.key == items){
-                                keyList.push(item.key)
-                                checkedCities.push(item)
-                            }
+                    if  (num !== 4) {
+                         // 1、 项目
+                        let keyList = []
+                        let checkedCities = []
+                        let keyArr = (res.data.element).split(',')
+                        keyArr.forEach(items => {
+                            this.transferEleList.forEach(item => {
+                                if (item.key == items){
+                                    keyList.push(item.key)
+                                    checkedCities.push(item)
+                                }
+                            })
                         })
-                    })
-
-                     // 2、城市
-                    let siteList = res.data.siteList.map(item => item.siteId)
-                    this.copySiteListEle = res.data.siteList.map(item => item)
-                    let {channelName, townTypeId, status, name, timeType,} = res.data
-                    this.ruleFormColumn = {channelName, townTypeId, status, name, timeType}
-                    this.ruleForm = {
-                        ...res.data,
-                        siteList,
-                        element: keyList
+                          // 2、城市
+                        let siteList = res.data.siteList.map(item => item.siteId)
+                        this.copySiteListEle = res.data.siteList.map(item => item)
+                        let {channelName, townTypeId, status, name, timeType,} = res.data
+                        this.ruleFormColumn = {channelName, townTypeId, status, name, timeType}
+                        this.ruleForm.siteList = siteList
+                        this.ruleForm.element = keyList
+                         // 3、项目 2
+                        this.checkedCities = checkedCities
+                        this.handleCheckedCitiesChange(checkedCities)
                     }
-                    // 3、项目 2
-                    this.checkedCities = checkedCities
-                    this.handleCheckedCitiesChange(checkedCities)
-
-
                     // 站点
                     if (num == 4){
-                        this.siteData(2)
+                        this.siteDataListParams.channelId = row.id
+                        this.initSiteDataList()
                         this.columnsiteList(row)
                     }
                 } else {
@@ -639,11 +649,13 @@ export default {
                 }
             })
         },
+        // 下一步
         stepsClick(){
             this.$refs['ruleFormColumn'].validate((valid) => {
                 if (valid){
                     this.stepsNum = 2
-                    this.siteData(1)
+                    this.siteData()
+                    this.channelTop = '1%'
                 }
             })
         },
@@ -687,6 +699,7 @@ export default {
                 })
             }).catch(err => {})
         },
+        // 保存站点别名
         siteSave(row){
             if (!String(row.siteAlias).trim()){
                 this.$message.error('请输入站点别名');
@@ -730,7 +743,6 @@ export default {
             }).catch(err => {})
             
         },
-
         handleCurrentChange(page){
             this.params.pageNum = page
             this.initData()
@@ -738,6 +750,14 @@ export default {
         handleSizeChange(size){
             this.params.pageSize = size
             this.initData()
+        },
+        siteListCurrentChange(page){
+            this.siteDataListParams.pageNum = page
+            this.siteDataList()
+        },
+        siteListSizeChange(size){
+            this.siteDataListParams.pageSize = size
+            this.siteDataList()
         },
         // transfer 右边选中的结果
         transRightChange(value, dataType){
@@ -1033,16 +1053,9 @@ export default {
                 pageNum: 1,
                 pageSize: 99999,
             }
-            if (siteStstus == 1){
-                this.copySiteList =  this.$refs.refTransfer.$refs.rightPanel.data || []
-            }
-            if (siteStstus == 2){
-                this.copySiteList = []
-            }
             this.$nextTick(() => {
-                // this.transferSiteList = [...this.$refs.refTransfer.$refs.rightPanel.data]
+                this.copySiteList = this.$refs.refTransfer.$refs.rightPanel.data || []
                 this.$http.post(`${this.$api.server}/site/page`, params).then(res => {
-                    this.siteLoading = false
                     if(res.code == 200) {
                         let list = res.data.records || []
                         let transferSiteList = list.map(item => {
@@ -1050,15 +1063,37 @@ export default {
                             return item;
                         })
                         this.transferSiteList = transferSiteList
-                        if (siteStstus == 1) this.transferSiteList.push(...this.copySiteList)
-                        
-
+                        this.transferSiteList.push(...this.copySiteList)
                     } else {
                         this.$message.error(res.message)
                     }
+                    this.siteLoading = false
                 })
             })
-            
+        },
+        //初始化站点查询参数
+        initSiteDataList(){
+            this.siteDataListParams.pageNum = 1
+            this.siteDataListParams.pageSize = 10
+            this.siteDataList()
+        },
+        // 站点列表查询
+        siteDataList(){
+            this.siteLoading = true
+            this.$http.post(`${this.$api.server}/site/page`, this.siteDataListParams).then(res => {
+                this.siteLoading = false
+                if(res.code == 200) {
+                    let list = res.data.records || []
+                    let transferSiteList = list.map(item => {
+                        item.siteAlias = '';
+                        return item;
+                    })
+                    this.siteListTotal = res.data.total || 0
+                    this.transferSiteList = transferSiteList
+                } else {
+                    this.$message.error(res.message)
+                }
+            })
         },
         // 站点别名
         propsClick(){

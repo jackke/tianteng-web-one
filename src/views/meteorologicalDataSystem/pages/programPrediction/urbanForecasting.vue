@@ -14,7 +14,7 @@
                 </el-select>
             </el-form-item>
             <el-form-item label="时效：">
-                <el-select v-model="params.allItem" multiple placeholder="请选择时效" popper-class="mars-select">
+                <el-select v-model="params.allItem" multiple placeholder="请选择时效" popper-class="mars-select" style="width: 330px;">
                     <el-option v-for="(item, index) in reportTime" :key="index" :label="item" :value="item"></el-option>
                 </el-select>
             </el-form-item>
@@ -23,7 +23,7 @@
                 <el-button icon="el-icon-printer" type="warning" @click="dialogVisible = true">打印</el-button>
             </el-form-item>
         </el-form>
-       <div style="flex: 1;display: flex; flex-direction: column;">
+       <div style="flex: 1;display: flex; flex-direction: column;overflow-y: auto;padding-bottom: 30px;">
             <div class="title-text">
                 <div v-for="(item, index) in titleList" :key="index"> 
                     <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
@@ -35,9 +35,11 @@
                 <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]">
                 </el-table-column>
             </el-table>
-            <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :fullscreen="true" :show-close="false" :close-on-click-modal="false" :modal-append-to-body="true" :append-to-body="true">
+       <div style="padding-top: 10px; position: absolute; width: 100%; bottom: 0; left:0; z-index: 9; background: #102041;">
+            <ComPagination :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
+        </div>
+       <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :fullscreen="true" :modal-append-to-body="false" :append-to-body="false">
             <div style="display: flex; flex-direction: column; width: 100%;height: 100vh;">
                 <div id="tablePrint" style="flex: 1;">
                     <div class="title-text">
@@ -171,8 +173,8 @@ export default {
         tableHeaderStyle(row, rowIndex){
             // let column = row.column
             // console.log(row, rowIndex);
-            let widthStyle = row.column.label.length * 25
-            return {width: widthStyle + 'px', textAlign: 'center'}
+            // let widthStyle = row.column.label.length * 25
+            // return {width: widthStyle + 'px', textAlign: 'center'}
         }
     }
 }
@@ -183,11 +185,15 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
-    overflow-y: auto;
     box-sizing: border-box;
+    position: relative;
     .element-button{
         padding: 20px;
         text-align: end;
+    }
+    /deep/ .el-dialog .el-dialog__header{
+        border: 0;
+        padding: 5px;
     }
     .title-text >div{
         display: flex;

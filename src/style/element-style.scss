@@ -133,10 +133,10 @@ $_labelColor:#D8FBFD;
     .el-select-dropdown__item{
         color: #fff;
     }
-    // .el-select-dropdown__item.selected{
-    //     color: $_textColor;
-    //     background-color: transparent
-    // }
+    .el-select-dropdown__item.selected{
+        // color: $_textColor;
+        background-color: transparent !important;
+    }
     // .el-select-dropdown__item.selected::after{
     //     position: absolute;
     //     right: 20px;

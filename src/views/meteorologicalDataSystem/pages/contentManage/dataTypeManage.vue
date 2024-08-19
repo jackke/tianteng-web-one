@@ -70,19 +70,23 @@
                 </el-form-item>
                 <el-form-item label="元素名称：" prop="elementList" >
                     <div class="tag-element">
-                        <el-tag
-                        class="input-new-tag"
-                        :key="tag"
-                        v-for="tag in ruleForm.elementList">{{tag}}</el-tag>
+                        <div v-for="(item, index) in ruleForm.elementList" :key="index">
+                            <el-tag v-if="!item.status" class="input-new-tag" @click="doubleClick(index)" >{{item.name}}</el-tag>
+                            <el-input
+                                style="width: 200px;margin-right: 10px"
+                                class="input-new-tag"
+                                v-if="item.status"
+                                :key="index"
+                                v-model="ruleForm.elementList[index].name"
+                                size="medium"
+                                @keyup.enter.native="handleInputConfirm(index)"
+                                @blur="handleInputConfirm(index)"
+                                >
+                            </el-input>
+                        </div>
                     </div>
                 </el-form-item>
-                <el-form-item label="文件名称：" prop="fileName">
-                    <el-input v-model="ruleForm.fileName" placeholder="请输入文件名称。如：filename[MM][DD][HH].[FFF]"></el-input>
-                </el-form-item>
-                <el-form-item label="文件地址：" prop="filePath">
-                    <el-input v-model="ruleForm.filePath" placeholder="请输入文件地址"></el-input>
-                </el-form-item>
-                <!-- <el-form-item label="元素名称：" prop="elementList" >
+                 <!-- <el-form-item label="元素名称：" prop="elementList" >
                     <div class="tag-element">
                         <draggable v-model="ruleForm.elementList">
                             <el-tag
@@ -107,6 +111,12 @@
                         <el-button v-else type="primary" size="medium" @click="showInput">+ 添加元素名称</el-button>
                     </div>
                 </el-form-item> -->
+                <el-form-item label="文件名称：" prop="fileName">
+                    <el-input v-model="ruleForm.fileName" placeholder="请输入文件名称。如：filename[MM][DD][HH].[FFF]"></el-input>
+                </el-form-item>
+                <el-form-item label="文件地址：" prop="filePath">
+                    <el-input v-model="ruleForm.filePath" placeholder="请输入文件地址"></el-input>
+                </el-form-item>
                 <!-- <el-form-item label="站点名称：" prop="resource">
                     <el-input v-model="ruleForm.name" placeholder="请输入站点名称"></el-input>
                 </el-form-item> -->
@@ -371,7 +381,7 @@ export default {
             let tagList = []
             for (const key in row) {
                 if (key.match(reg) && row[key]){
-                    tagList.push(row[key])
+                    tagList.push({status: false, name: row[key]})
                 }
             }
             console.log(row);
@@ -437,17 +447,16 @@ export default {
             })
         },
         // ------------------ 添加元素类型  start--------------------------------
-        handleInputConfirm() {
-            let inputValue = this.inputValue;
-            if (inputValue) {
-            this.ruleForm.elementList.push(inputValue);
-            }
-            this.inputVisible = false;
-            this.inputValue = '';
+        doubleClick(index){
+            console.log(index);
+            this.ruleForm.elementList[index].status = true
         },
-        handleClose(tag) {
-            this.ruleForm.elementList.splice(this.ruleForm.elementList.indexOf(tag), 1);
+        handleInputConfirm(index) {
+            this.ruleForm.elementList[index].status = false
         },
+        // handleClose(tag) {
+        //     this.ruleForm.elementList.splice(this.ruleForm.elementList.indexOf(tag), 1);
+        // },
 
         showInput() {
             this.inputVisible = true;
@@ -556,7 +565,7 @@ export default {
                         cron: this.ruleForm.cron,
                     }
                     this.ruleForm.elementList.forEach((item, index) => {
-                        data[`ele${index + 1}Name`] = item
+                        data[`ele${index + 1}Name`] = item.name
                     })
                     if(this.submitType == 'add'){
                         this.$http.post(`${this.$api.server}/town/type/save`, data).then(res => {
