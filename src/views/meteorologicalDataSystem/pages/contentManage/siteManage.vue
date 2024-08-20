@@ -298,13 +298,13 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.getFile(`${this.$api.server}/columnsite/exportsite`, {id: row.id}).then(res => {
+                this.$http.postFile(`${this.$api.server}/columnsite/exportsite`, {id: row.id}).then(res => {
                     // console.log(res);
                     if (res.status == 200){
                         let data = res.data
                         let blob = new Blob([data], {type: 'application/vnd.ms-excel;charset=utf-8'})
                         let fileName = decodeURI(res.headers['content-disposition'])
-                        // console.log(fileName);
+                        console.log(fileName, res);
                         // saveAs(blob, `${fileName}.xlsx`);
                         if (typeof window.navigator.msSaveBlob !== 'undefined') {
                             // 兼容IE，window.navigator.msSaveBlob：以本地方式保存文件

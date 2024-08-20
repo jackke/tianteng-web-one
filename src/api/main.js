@@ -58,18 +58,32 @@ export const httpDelete = (url, params) => {
 }
 
 export const httpGetFile = (url, params) => {
-  return new Promise((reject, resolve) => {
-    server({
-        url: url,
-        method: 'GET',
-        params: params,
-        responseType: 'blob'
-    }).then(resolue => {
-        reject(resolue)
-    }).catch(error => {
-        resolve(error)
-    });
-  })
+    return new Promise((reject, resolve) => {
+        server({
+            url: url,
+            method: 'GET',
+            params: params,
+            responseType: 'blob'
+        }).then(resolue => {
+            reject(resolue)
+        }).catch(error => {
+            resolve(error)
+        });
+    })
+}
+export const httpPostFile = (url, params) => {
+    return new Promise((reject, resolve) => {
+        server({
+            url: url,
+            method: 'POST',
+            params: params,
+            responseType: 'blob'
+        }).then(resolue => {
+            reject(resolue)
+        }).catch(error => {
+            resolve(error)
+        });
+    })
 }
 
 let http = {
@@ -78,6 +92,7 @@ let http = {
   put: httpPut,
   delete: httpDelete,
   getFile: httpGetFile,
+  postFile: httpPostFile
 }
 
 Vue.prototype.$http = http

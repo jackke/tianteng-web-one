@@ -48,7 +48,7 @@
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
                 <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
-                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)" >
+                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)" trigger="click">
                             <el-button type="primary" size="medium">
                                 更多操作<i class="el-icon-arrow-down el-icon--right"></i>
                             </el-button>
@@ -87,7 +87,7 @@
                                 :fetch-suggestions="querySearch"
                                 placeholder="请选择频道"
                                 popper-class="mars-autocomplete"
-                                @select="handleSelectChannel">
+                                @select="(val) => handleSelectChannel(val, 1)">
                                 <template slot-scope="{ item }">
                                     <div>{{ item.name }}</div>
                                 </template>
@@ -197,7 +197,7 @@
                 </div>
         </el-dialog>
         <!--  排序 -->
-        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+        <el-dialog title="栏目排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div style="color: #6EA4B2;position: relative; top: -15px;z-index: 10;">提示：拖动下方列表进行排序。</div>
             <div style="display: flex; max-height: 600px; overflow: auto">
                 <div style="width: 50px;">
@@ -214,7 +214,7 @@
         </el-dialog>
         <!-- 转移栏目 -->
         <el-dialog title="转移栏目" :visible.sync="dialogVisibleTransfer" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
-            <el-form :model="transferForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input" size="medium">
+            <el-form :model="transferForm" :rules="rules" label-width="100px" class="element-input" size="medium">
                 <el-form-item label="栏目名称：" prop="name">
                     <div style="color: #fff">{{ transferForm.name}}</div>
                 </el-form-item>
@@ -268,7 +268,7 @@
                 <div>
                     <div style="color:#fff;margin: 10px 0;">提示：可拖动下方标签进行排序。</div>
                     <div>
-                        <draggable>
+                        <draggable v-model="checkedCities">
                             <el-tag
                                 v-for="tag in checkedCities"
                                 :key="tag.label"
@@ -292,7 +292,7 @@
                     <el-descriptions-item label="数据类型"> {{ townTypeIdFn('', '', ruleForm.townTypeId)}} </el-descriptions-item>
                     <el-descriptions-item label="时次">{{ ruleForm.timeType }}</el-descriptions-item>
                 </el-descriptions>
-                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input" size="medium">
+                 <el-form :rules="rules" class="element-input" size="medium">
                     <el-form-item label="城市站点：">
                         <el-input v-model="siteDataListParams.name" placeholder="请输入站点名称" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
                         <el-input v-model="siteDataListParams.code" placeholder="请输入站点编号" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
@@ -300,7 +300,7 @@
                         <el-button type="primary" @click="dialogVisibleSiteExport = true">导 入</el-button>
                     </el-form-item>
                     <el-form-item >
-                        <el-table ref="tableSiteList" class="element-table" max-height="300px" v-loading="siteLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                        <el-table class="element-table" max-height="300px" v-loading="siteLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                             <el-table-column type="index" label="序号" width="55"> </el-table-column>
                             <el-table-column prop="name" label="名称"> </el-table-column>
                             <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
@@ -322,7 +322,7 @@
                 <div>
                     <div style="color:#fff;margin: 10px 0;">提示：可拖动下方标签进行排序。</div>
                     <div>
-                        <draggable>
+                        <draggable v-model="multipleSelection">
                             <el-tag
                                 v-for="tag in multipleSelection"
                                 :key="tag.label"
@@ -376,7 +376,7 @@
                         :fetch-suggestions="querySearch"
                         placeholder="请选择频道"
                         popper-class="mars-autocomplete"
-                        @select="handleSelectChannel">
+                        @select="(val) => handleSelectChannel(val, 2)">
                         <template slot-scope="{ item }">
                             <div>{{ item.name }}</div>
                         </template>
@@ -416,6 +416,7 @@
 <script>
 import draggable from 'vuedraggable';
 import ComPagination from '@/components/comPagination.vue'
+import { HttpStatusCode } from 'axios';
 
 export default {
     name: 'columnManage',
@@ -629,7 +630,7 @@ export default {
                         })
                           // 2、城市
                         let siteList = res.data.siteList.map(item => item.siteId)
-                        this.copySiteListEle = res.data.siteList.map(item => item)
+                        this.copySiteListEle = res.data.siteList || []
                         let {channelName, townTypeId, status, name, timeType,} = res.data
                         this.ruleFormColumn = {channelName, townTypeId, status, name, timeType}
                         this.ruleForm.siteList = siteList
@@ -677,7 +678,8 @@ export default {
             }
             this.$http.post(`${this.$api.server}/columnsite/list`, data).then(res => {
                 if(res.code == 200) {
-                    this.multipleSelection = res.data || []
+                    let list = res.data || []
+                    this.multipleSelection = list.sort((a, b) => a.sort - b.sort)
                 } else {
                     this.$message.error(res.message)
                 }
@@ -843,12 +845,13 @@ export default {
         },
         // 编辑新建 按钮
         submitForm(status){
-            // console.log(this.$refs.refTransferEle.$refs.rightPanel.data);
+            console.log(this.ruleForm);
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
-                    let data = {...this.ruleForm, ...this.ruleFormColumn, userId: this.$store.state.userId}
+                    let data = {...this.ruleForm, userId: this.$store.state.userId}
                     this.dialogLoading = true
                     if (status == 1){
+                        data = {...data, ...this.ruleFormColumn}
                         // let checkedCitiesList = this.checkedCities.map(item => item.key)
                         let checkedCitiesList =this.$refs.refTransferEle.$refs.rightPanel.data.map(item => item.key)
                         // 项目要素 参数
@@ -867,7 +870,7 @@ export default {
                         let checkedCitiesList = this.checkedCities.map(item => item.key)
                         // 项目要素 参数
                         data.element = String(checkedCitiesList)
-                        data.siteList = this.copySiteList
+                        data.siteList = this.copySiteListEle
                      }
                     if (this.type == 'edit'){
                         this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
@@ -915,25 +918,26 @@ export default {
         },
         // 城市站点添加
         submitSiteSort(){
-            this.$refs['ruleForm'].validate((valid) => {
-                if (valid) {
-                    this.dialogLoading = true
-                    let data = {
-                        columnId: this.ruleForm.id,
-                        sortIds: this.multipleSelection.map(item => item.id)
+            if (this.multipleSelection.length > 0) {
+                this.dialogLoading = true
+                let data = {
+                    columnId: this.ruleForm.id,
+                    sortIds: this.multipleSelection.map(item => item.id)
+                }
+                this.$http.post(`${this.$api.server}/columnsite/sort`, data).then(res => {
+                    this.dialogLoading = false
+                    if(res.code == 200) {
+                        this.initData()
+                        this.handleClose()
+                        this.$message({ message: '修改成功', type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
                     }
-                    this.$http.post(`${this.$api.server}/columnsite/sort`, data).then(res => {
-                        this.dialogLoading = false
-                        if(res.code == 200) {
-                            this.initData()
-                            this.handleClose()
-                            this.$message({ message: '修改成功', type: 'success' })
-                        } else {
-                            this.$message.error(res.message)
-                        }
-                    })
-                } 
-            })
+                })
+            } else {
+                this.$message.error('请添加站点');
+            }
+            
         },
         // 获取项目列表
         townTypeChange(value){
@@ -974,9 +978,12 @@ export default {
             this.isIndeterminate = false
         },
         submitSort(){
-            let data = this.tableDataSort.map(item => item.id)
+            let data = {
+                arr : this.tableDataSort.map(item => item.id),
+                channelId: this.params.channelId
+            }
             this.dialogLoading = true;
-            this.$http.post(`${this.$api.server}/channel/sort`, data).then(res => {
+            this.$http.post(`${this.$api.server}/column/sort`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -1122,9 +1129,15 @@ export default {
                 this.params.channelId = value.id;
                 this.initData()
         },
-        handleSelectChannel(value){
+        handleSelectChannel(value, status){
+            if (status == 1){
+                this.ruleFormColumn.channelName = value.name
+                this.ruleFormColumn.channelId = value.id
+            } else {
                 this.ruleForm.channelName = value.name;
                 this.ruleForm.channelId = value.id;
+            }
+            
         },
         handleSelectTransfer(value){
                 this.transferForm.channelName = value.name;
@@ -1136,14 +1149,6 @@ export default {
                 return this.typeOption.find(item => item.id == value).typeName
             }
         },
-        // timeTypeFn(row, props, value){
-        //     console.log(this.timeOption, this.timeOption.find(item => item == value));
-        //     if (value){
-
-        //         return this.timeOption.filter(item => item == value)
-        //     }
-        // },
-        
     }
 }
 </script>

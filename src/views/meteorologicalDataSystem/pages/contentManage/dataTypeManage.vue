@@ -224,7 +224,7 @@
             </div>
         </el-dialog>
         <el-dialog :visible.sync="openTitle" destroy-on-close :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
-            <div>
+            <div style="white-space: pre-line;">
                 {{ titleParseSteps }}
             </div>
             <div slot="footer" style="text-align: center;">
