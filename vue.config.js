@@ -21,7 +21,7 @@ module.exports = defineConfig({
       //   secure: false // 设置支持https协议的代理
       // },
       '/server' : {
-        target: 'http://192.168.1.74:8004',
+        target: 'http://192.168.1.253:8004',
         pathRewrite: { '^/server': '' },
         changeOrigin: true, // target 是域名的话，需要这个参数
         secure: false // 设置支持https协议的代理
@@ -31,8 +31,6 @@ module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,// 关闭ESLINT校验工具
   chainWebpack: config => {
-    config.resolve.alias
-      .set('@', resolve('src'));
     config.plugin('html').tap(args => {
       args[0].title = '天腾气象影视管理系统'; //网站标题
       return args;
@@ -44,7 +42,10 @@ module.exports = defineConfig({
     },
     resolve: {
       fallback: { "https": false, "zlib": false, "http": false, "url": false },
-      mainFiles: ['index']
+      mainFiles: ['index'],
+      alias: {
+        '@': resolve('src')
+      }
     },
     plugins: [
       

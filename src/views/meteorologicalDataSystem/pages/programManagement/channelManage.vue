@@ -3,7 +3,7 @@
     <div class="channelManage">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="频道名称：">
-                <el-input v-model="params.description" placeholder="请输入频道名称" clearable></el-input>
+                <el-input v-model="params.name" placeholder="请输入频道名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="状态：">
                 <el-select v-model="params.status" placeholder="请选择" popper-class="mars-select" style="width: 100px;">
@@ -19,7 +19,7 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" max-height="850" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column prop="sort" label="序号" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="name" label="频道名称"> </el-table-column>
                 <el-table-column prop="description" label="描述"></el-table-column>

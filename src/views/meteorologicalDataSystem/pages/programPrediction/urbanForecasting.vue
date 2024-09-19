@@ -24,12 +24,14 @@
             </el-form-item>
         </el-form>
        <div style="flex: 1;display: flex; flex-direction: column;overflow-y: auto;padding-bottom: 30px;">
+            <!-- 标题 -->
             <div class="title-text">
                 <div v-for="(item, index) in titleList" :key="index"> 
                     <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
                 </div>
             </div>
-            <el-table class="element-table" :data="tableData" height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle">
+            <!-- 列表 -->
+            <el-table class="element-table" :data="tableData" v-loading="tableLoading" height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle"  element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                 <el-table-column type="index" label="序号" width="55" fixed></el-table-column>
                 <el-table-column prop="siteId" label="站点编号"> </el-table-column>
                 <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]">
@@ -87,6 +89,7 @@ export default {
             total: 0,
             typeOption:[],
             titleList: [],
+            tableLoading: false,
         }
     },
     created(){

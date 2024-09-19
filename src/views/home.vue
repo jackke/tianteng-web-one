@@ -42,11 +42,12 @@ export default {
   box-sizing: border-box;
 
   .headTitle{
-    height: 12vh;
+    height: 80px;
   }
   .content{
-    height: 88vh;
-    // overflow: hidden;
+    // height: 88vh;
+    flex: 1;
+    overflow: hidden;
     margin: 5px 20px 20px 20px;
     box-sizing: border-box;
 

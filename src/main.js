@@ -9,6 +9,9 @@ import locale from './assets/elementUi/cn';
 
 // 将所有组件为全局组件
 import dataV from '@jiaminghi/data-view'
+
+// autofit.js 自动适数据大屏插件
+
 Vue.use(dataV)
 
 Vue.use(ElementUI, {

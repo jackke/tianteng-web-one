@@ -246,7 +246,7 @@ export default {
             background: linear-gradient(0deg, #00F6FF 20%, #FFFFFF 60%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            padding-top: 22px;
+            padding-top: 12px;
             padding-right: 25px;
         }
         .navTextStyle {

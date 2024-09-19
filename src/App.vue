@@ -1,7 +1,7 @@
 @ -1,5 +1,5 @@
 <template>
       <div id="app">
-          <dv-full-screen-container style="position: absolute;height: 100%;">
+          <dv-full-screen-container style="position: absolute;height: 90%;">
             <router-view />
           </dv-full-screen-container>
       </div>
@@ -36,7 +36,7 @@ export default {
     color: #FFFFFF;
     width: 100vw;
     height: 100vh;
-    /* overflow: hidden; */
+    overflow: hidden;
     overflow-y: auto;
     box-sizing: border-box;
   }
