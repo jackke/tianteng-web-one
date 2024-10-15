@@ -150,7 +150,7 @@
                                 <el-form-item   style="width: 50%;">
                                     <el-input v-model="siteValue" placeholder="城市站点" clearable style="width: 70%;" @change="siteData(1)">
                                         <el-button slot="append" size="medium" @click="siteData(1)" :loading="siteLoading">查询</el-button>
-                                        <el-button slot="append" size="medium" type="primary" >导入</el-button>
+                                        <el-button slot="append" size="medium" type="primary" @click="dialogVisibleSiteExport = true" >导入</el-button>
                                     </el-input>
                                     <div style="color: #fff;"> 提示：请选择数据类型。 </div>
                                 </el-form-item>
@@ -911,6 +911,7 @@ export default {
                 if(res.code == 200) {
                     this.dialogVisibleSiteExport = false
                     this.$message({ message: '导入成功', type: 'success' })
+                    this.siteData(1)
                 } else {
                     this.$message.error(res.message)
                 }
