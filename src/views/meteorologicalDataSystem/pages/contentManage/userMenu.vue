@@ -98,8 +98,8 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            // this.$http.get(`${this.$api.server}/user/list`).then(res => {
-            this.$http.post(`${this.$api.server}/role/page`, this.params).then(res => {
+            // this.$http.get(`/user/list`).then(res => {
+            this.$http.post(`/role/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
@@ -156,7 +156,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/role/del?id=${row.roleId}`).then(res => {
+                this.$http.post(`/role/del?id=${row.roleId}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `删除成功`, type: 'success' })
@@ -168,7 +168,7 @@ export default {
         },
         // -------------------------       tree start         ---------------------------------------
         getMenu(id){
-            this.$http.get(`${this.$api.server}/role/info/${id}`).then(res => {
+            this.$http.get(`/role/info/${id}`).then(res => {
                     if(res.code == 200) {
                         this.$nextTick(() => {
                             this.$refs.tree.setCheckedKeys(res.data.menuIdList || []);
@@ -184,7 +184,7 @@ export default {
                 resolve(this.ruleForm.treeData)
             }
             if (node.level == 1) {
-                this.$http.get(`${this.$api.server}/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
+                this.$http.get(`/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
                     if(res.code == 200) {
                         menuList = res.data || []
                         resolve(menuList)
@@ -195,7 +195,7 @@ export default {
                 })
             }
             if (node.level == 2 || node.level == 3) {
-                this.$http.get(`${this.$api.server}/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
+                this.$http.get(`/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
                     if(res.code == 200) {
                         let list = res.data || []
                         resolve(list[0].child)
@@ -226,7 +226,7 @@ export default {
                             menuIdList: getkey
                     }
                     if (this.type == 'add'){
-                            this.$http.post(`${this.$api.server}/role/save`, data).then(res => {
+                            this.$http.post(`/role/save`, data).then(res => {
                                 if(res.code == 200) {
                                     this.handleClose()
                                     this.params.pageNum = 1
@@ -237,7 +237,7 @@ export default {
                                 }
                             })
                     } else if (this.type == 'edit'){
-                            this.$http.post(`${this.$api.server}/role/mod`, data).then(res => {
+                            this.$http.post(`/role/mod`, data).then(res => {
                                 if(res.code == 200) {
                                     this.handleClose()
                                     this.params.pageNum = 1

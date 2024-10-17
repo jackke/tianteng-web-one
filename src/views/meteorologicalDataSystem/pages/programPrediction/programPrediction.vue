@@ -125,7 +125,7 @@ export default {
         initData(){
             let params = {...this.params}
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/town/table/page`, params).then(res => {
+            this.$http.post(`/town/table/page`, params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200 && res.data) {
                     // this.tableData = res.data.page.records || []
@@ -150,7 +150,7 @@ export default {
                 pageNum: 1,
                 pageSize: 99,
             }
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 if(res.code == 200 &&  res.data) {
                     results = res.data.records || []
                     // 调用 callback 返回建议列表的数据
@@ -175,7 +175,7 @@ export default {
                 pageNum: 1,
                 pageSize: 999,
             }
-            this.$http.post(`${this.$api.server}/column/page`, params).then(res => {
+            this.$http.post(`/column/page`, params).then(res => {
                 if(res.code == 200 && res.data) {
                    this.columnOptions = res.data.records || []
                 } else {
@@ -196,7 +196,7 @@ export default {
         columnChange(value){
             console.log(value);
             this.params.columnId = value.id
-            this.$http.get(`${this.$api.server}/column/info/${value.id}`).then(res => {
+            this.$http.get(`/column/info/${value.id}`).then(res => {
                 if(res.code == 200) {
                     this.reportTimeList = res.data.reportTimeList || []
                     this.tableEleName = res.data.eleName || {}
@@ -255,7 +255,7 @@ export default {
                             columnId: this.params.columnId,
                             reportTimeList: String(this.params.reportTimeList)
                         }
-                        this.$http.getFile(`${this.$api.server}/town/export`, params).then(res => {
+                        this.$http.getFile(`/town/export`, params).then(res => {
                             // console.log(res);
                             if (res.status == 200){
                                 let data = res.data

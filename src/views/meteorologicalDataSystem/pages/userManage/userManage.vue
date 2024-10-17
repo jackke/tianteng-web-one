@@ -187,7 +187,7 @@ export default {
             this.dialogVisible = true
         },
         initType(){
-            this.$http.get(`${this.$api.server}/user/list`).then(res => {
+            this.$http.get(`/user/list`).then(res => {
                     if(res.code == 200) {
                        this.roleOptions = res.data || []
                     } else {
@@ -197,7 +197,7 @@ export default {
         },
         initData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/user/page`, this.params).then(res => {
+            this.$http.post(`/user/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
@@ -226,7 +226,7 @@ export default {
                     id: row.id,
                     state: value
                 }
-                this.$http.post(`${this.$api.server}/user/mod`, data).then(res => {
+                this.$http.post(`/user/mod`, data).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `${title}成功`, type: 'success' })
@@ -246,7 +246,7 @@ export default {
                     id: row.id,
                     password: '000000',
                 }
-                this.$http.post(`${this.$api.server}/user/mod`, data).then(res => {
+                this.$http.post(`/user/mod`, data).then(res => {
                     if(res.code == 200) {
                         this.$message({ message: '重置密码成功', type: 'success' })
                     } else {
@@ -261,7 +261,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/user/del?id=${row.id}`).then(res => {
+                this.$http.post(`/user/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({  message: '删除成功',  type: 'success' })
@@ -277,7 +277,7 @@ export default {
                     this.dialogLoading = true
                     if(this.submitType == 'add'){
                         this.ruleForm.password = '000000'
-                        this.$http.post(`${this.$api.server}/user/save`, this.ruleForm).then(res => {
+                        this.$http.post(`/user/save`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()
@@ -298,7 +298,7 @@ export default {
                         })
                     }
                     if(this.submitType == 'edit'){
-                        this.$http.post(`${this.$api.server}/user/mod`, this.ruleForm).then(res => {
+                        this.$http.post(`/user/mod`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()

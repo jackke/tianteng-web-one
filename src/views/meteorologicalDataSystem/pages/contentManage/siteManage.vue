@@ -84,7 +84,7 @@
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="文件列表：" prop="fileList">
-                    <!-- `${this.$api.server}/site/import` -->
+                    <!-- `/site/import` -->
                     <el-upload
                         style="margin: 0 10px;"
                         ref="formFile"
@@ -262,7 +262,7 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/site/page`, this.params).then(res => {
+            this.$http.post(`/site/page`, this.params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.tableData = res.data.records || []
@@ -298,7 +298,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.postFile(`${this.$api.server}/columnsite/exportsite`, {id: row.id}).then(res => {
+                this.$http.postFile(`/columnsite/exportsite`, {id: row.id}).then(res => {
                     // console.log(res);
                     if (res.status == 200){
                         let data = res.data
@@ -346,7 +346,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/site/del?id=${row.id}`).then(res => {
+                this.$http.post(`/site/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `删除成功`, type: 'success' })
@@ -369,7 +369,7 @@ export default {
                 if (valid) {
                     this.dialogLoading = true
                     if(this.submitType == 'add'){
-                        this.$http.post(`${this.$api.server}/site/save`, this.ruleForm).then(res => {
+                        this.$http.post(`/site/save`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()
@@ -384,7 +384,7 @@ export default {
                         })
                     }
                     if(this.submitType == 'edit'){
-                        this.$http.post(`${this.$api.server}/site/mod`, this.ruleForm).then(res => {
+                        this.$http.post(`/site/mod`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()
@@ -421,7 +421,7 @@ export default {
                     let formData = new FormData()
                     formData.append('file', fileName.raw)
                     if(this.ruleFormFile.fileType == 'site'){
-                        this.$http.post(`${this.$api.server}/site/import`, formData).then(res => {
+                        this.$http.post(`/site/import`, formData).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()
@@ -436,7 +436,7 @@ export default {
                         })
                     } else {
                         formData.append('type',fileType)
-                        this.$http.post(`${this.$api.server}/site/importMMT`, formData).then(res => {
+                        this.$http.post(`/site/importMMT`, formData).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.handleClose()
@@ -466,11 +466,11 @@ export default {
             let dataUrl = []
             if (this.exportStatue == 1) {
                 let params = {...this.params, typeId: this.exportStatue}
-                dataUrl = [`${this.$api.server}/site/export`, params]
+                dataUrl = [`/site/export`, params]
             }
             if (this.exportStatue == 2) {
                 let arr = this.exportArray.map(item => item[1])
-                dataUrl = [`${this.$api.server}/column/export`,{ arr: String(arr) }]
+                dataUrl = [`/column/export`,{ arr: String(arr) }]
             }
             
             this.$confirm(`是否确认导出？`, '提示', {

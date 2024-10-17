@@ -119,7 +119,7 @@ export default {
                 roleId: '',
                 state: 1
             }
-            this.$http.post(`${this.$api.server}/user/page`,params).then(res => {
+            this.$http.post(`/user/page`,params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.userData = res.data.records || []
@@ -131,7 +131,7 @@ export default {
         loadNode(node, resolve){
             let data = node.data
             if (node.level == 1){
-                this.$http.get(`${this.$api.server}/channel/userchannel/${data.id}`).then(res => {
+                this.$http.get(`/channel/userchannel/${data.id}`).then(res => {
                     if(res.code == 200) {
                         if (res.data && res.data.length == 0){
                             resolve([])
@@ -174,7 +174,7 @@ export default {
                     userId: this.$store.state.userId,
                     userList: this.transferValue,
                 }
-                this.$http.post(`${this.$api.server}/channel/adduser`, data).then(res => {
+                this.$http.post(`/channel/adduser`, data).then(res => {
                     if(res.code == 200) {
                         this.initUsetData()
                         this.treeDefaultKeys = this.transferValue
@@ -199,7 +199,7 @@ export default {
             this.initChannelUser(value.id)
         },
         initChannelUser(id){
-            this.$http.get(`${this.$api.server}/channel/channeluser/${id}`).then(res => {
+            this.$http.get(`/channel/channeluser/${id}`).then(res => {
                 if(res.code == 200) {
                     let list = res.data || []
                     this.transferValue = list.map(item => item.id)
@@ -218,7 +218,7 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
             }
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 let records = []
                 if(res.code == 200) {
                     records = res.data.records || []

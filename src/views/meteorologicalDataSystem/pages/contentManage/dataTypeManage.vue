@@ -351,7 +351,7 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/town/type/page`, this.params).then(res => {
+            this.$http.post(`/town/type/page`, this.params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.tableData = res.data.records || []
@@ -401,7 +401,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/town/type/del?id=${row.id}`).then(res => {
+                this.$http.post(`/town/type/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `删除成功`, type: 'success' })
@@ -436,7 +436,7 @@ export default {
         },
         initLog(){
             this.tableLogLoading = true
-            this.$http.post(`${this.$api.server}/hfFileParsingLogsPO/page`, this.logForm).then(res => {
+            this.$http.post(`/hfFileParsingLogsPO/page`, this.logForm).then(res => {
                 if(res.code == 200) {
                     this.tableLog = res.data.records || []
                     this.totalLog = res.data.total
@@ -508,7 +508,7 @@ export default {
                     id: row.id,
                     xxlId: row.xxlId
                 }
-                this.$http.post(`${this.$api.server}/town/stop`, data).then(res => {
+                this.$http.post(`/town/stop`, data).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `${title}成功`, type: 'success' })
@@ -535,7 +535,7 @@ export default {
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
                     this.dialogLoading = true
-                    this.$http.post(`${this.$api.server}/town/call`, this.recalculateForm).then(res => {
+                    this.$http.post(`/town/call`, this.recalculateForm).then(res => {
                         this.dialogLoading = false
                         if (res.code == 200){
                             this.$message({ message: '回算成功', type: 'success' })
@@ -568,7 +568,7 @@ export default {
                         data[`ele${index + 1}Name`] = item.name
                     })
                     if(this.submitType == 'add'){
-                        this.$http.post(`${this.$api.server}/town/type/save`, data).then(res => {
+                        this.$http.post(`/town/type/save`, data).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.dataDialogClose()
@@ -583,7 +583,7 @@ export default {
                         })
                     }
                     if(this.submitType == 'edit'){
-                        this.$http.post(`${this.$api.server}/site/mod`, data).then(res => {
+                        this.$http.post(`/site/mod`, data).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.dataDialogClose()

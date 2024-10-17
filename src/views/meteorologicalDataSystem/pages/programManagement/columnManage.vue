@@ -563,7 +563,7 @@ export default {
                 return false
             }
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/column/page`, this.params).then(res => {
+            this.$http.post(`/column/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
@@ -611,7 +611,7 @@ export default {
             this.type = 'edit'
             this[dialogVisible] = true
             this.townTypeChange(row.townTypeId)
-            this.$http.get(`${this.$api.server}/column/info/${row.id}`).then(res => {
+            this.$http.get(`/column/info/${row.id}`).then(res => {
                 if(res.code == 200) {
                     this.ruleForm = {...res.data}
                     // 找到transferEleList 原型对象 才能返显
@@ -676,7 +676,7 @@ export default {
                 columnId: row.id,
                 siteAlias: '',
             }
-            this.$http.post(`${this.$api.server}/columnsite/list`, data).then(res => {
+            this.$http.post(`/columnsite/list`, data).then(res => {
                 if(res.code == 200) {
                     let list = res.data || []
                     this.multipleSelection = list.sort((a, b) => a.sort - b.sort)
@@ -691,7 +691,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/columnsite/del?id=${row.id}`).then(res => {
+                this.$http.post(`/columnsite/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.columnsiteList(this.ruleForm)
                         this.$message({ message: '删除成功', type: 'success' })
@@ -714,7 +714,7 @@ export default {
                 columnId: this.ruleForm.id,
             }
             let data = {...row, siteAlias: `${row.siteAlias}（${row.name}）`}
-            this.$http.post(`${this.$api.server}/columnsite/save`, params).then(res => {
+            this.$http.post(`/columnsite/save`, params).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     data.id = res.data
@@ -734,7 +734,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/column/del?id=${row.id}`).then(res => {
+                this.$http.post(`/column/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: '删除成功', type: 'success' })
@@ -832,7 +832,7 @@ export default {
             data.element = String(checkedCitiesList)
             data.siteList = this.copySiteListEle
             this.dialogLoading = true
-            this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
+            this.$http.post(`/column/mod`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -873,7 +873,7 @@ export default {
                         data.siteList = this.copySiteListEle
                      }
                     if (this.type == 'edit'){
-                        this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
+                        this.$http.post(`/column/mod`, data).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -884,7 +884,7 @@ export default {
                             }
                         })
                     } else {
-                        this.$http.post(`${this.$api.server}/column/save`, data).then(res => {
+                        this.$http.post(`/column/save`, data).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -907,7 +907,7 @@ export default {
             let formData = new FormData()
             formData.append('file', this.fileList[0].raw)
             formData.append('id', this.ruleForm.id)
-            this.$http.post(`${this.$api.server}/column/importsite`, formData).then(res => {
+            this.$http.post(`/column/importsite`, formData).then(res => {
                 if(res.code == 200) {
                     this.dialogVisibleSiteExport = false
                     this.$message({ message: '导入成功', type: 'success' })
@@ -925,7 +925,7 @@ export default {
                     columnId: this.ruleForm.id,
                     sortIds: this.multipleSelection.map(item => item.id)
                 }
-                this.$http.post(`${this.$api.server}/columnsite/sort`, data).then(res => {
+                this.$http.post(`/columnsite/sort`, data).then(res => {
                     this.dialogLoading = false
                     if(res.code == 200) {
                         this.initData()
@@ -984,7 +984,7 @@ export default {
                 channelId: this.params.channelId
             }
             this.dialogLoading = true;
-            this.$http.post(`${this.$api.server}/column/sort`, data).then(res => {
+            this.$http.post(`/column/sort`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -1002,7 +1002,7 @@ export default {
                 columnId: this.transferForm.id,
                 newChannelId: this.transferForm.channelId
             }
-            this.$http.post(`${this.$api.server}/column/transfer`, data).then(res => {
+            this.$http.post(`/column/transfer`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -1020,7 +1020,7 @@ export default {
                 pageSize: 99,
                 typeName: ""
             }
-            this.$http.post(`${this.$api.server}/town/type/page`, params).then(res => {
+            this.$http.post(`/town/type/page`, params).then(res => {
                 if(res.code == 200) {
                     this.typeOption = res.data.records || []
                 } else {
@@ -1038,7 +1038,7 @@ export default {
                 userId: this.$store.state.userId
             }
             let records = []
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 if(res.code == 200) {
                     records = res.data.records || []
                     // 调用 callback 返回建议列表的数据
@@ -1063,7 +1063,7 @@ export default {
             }
             this.$nextTick(() => {
                 this.copySiteList = this.$refs.refTransfer.$refs.rightPanel.data || []
-                this.$http.post(`${this.$api.server}/site/page`, params).then(res => {
+                this.$http.post(`/site/page`, params).then(res => {
                     if(res.code == 200) {
                         let list = res.data.records || []
                         let transferSiteList = list.map(item => {
@@ -1088,7 +1088,7 @@ export default {
         // 站点列表查询
         siteDataList(){
             this.siteLoading = true
-            this.$http.post(`${this.$api.server}/site/page`, this.siteDataListParams).then(res => {
+            this.$http.post(`/site/page`, this.siteDataListParams).then(res => {
                 this.siteLoading = false
                 if(res.code == 200) {
                     let list = res.data.records || []

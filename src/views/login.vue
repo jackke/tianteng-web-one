@@ -83,7 +83,7 @@ import $ from 'jquery'
                         // password: (CryptoJS.MD5(this.form.password).toString()).toUpperCase()
                         password: this.form.password
                     }
-                    this.$http.post(`${this.$api.server}/user/login`, data).then(res => {
+                    this.$http.post(`/user/login`, data).then(res => {
                         this.loading = false
                         if (res.code == 200){
                             let menuList = res.data.menuList

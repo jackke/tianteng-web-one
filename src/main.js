@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import "./api/config"
 import App from './App.vue';
 import ElementUI from "element-ui";
 import router from "./router";

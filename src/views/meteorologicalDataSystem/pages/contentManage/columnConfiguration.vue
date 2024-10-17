@@ -123,7 +123,7 @@ export default {
         },
         siteInitData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/site/page`, this.ruleForm).then(res => {
+            this.$http.post(`/site/page`, this.ruleForm).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.siteTableData = res.data.records || []

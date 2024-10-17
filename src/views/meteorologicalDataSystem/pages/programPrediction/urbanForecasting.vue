@@ -102,7 +102,7 @@ export default {
             params.reportTimeList = [...this.params.allItem]
 
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/town/table/page`, params).then(res => {
+            this.$http.post(`/town/table/page`, params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.tableData = res.data.page.records || []
@@ -119,7 +119,7 @@ export default {
                 "pageSize": 99,
                 "typeName": ""
             }
-            this.$http.post(`${this.$api.server}/town/type/page`, params).then(res => {
+            this.$http.post(`/town/type/page`, params).then(res => {
                 if(res.code == 200) {
                     this.typeOption = res.data.records || []
                     // this.reportTime = JSON.parse(res.data.reportTime)
@@ -138,7 +138,7 @@ export default {
             
             this.params.type = value.typeName
             this.params.typeId = value.id
-            this.$http.get(`${this.$api.server}/town/type/info/${value.id}`).then(res => {
+            this.$http.get(`/town/type/info/${value.id}`).then(res => {
                 if(res.code == 200) {
                     this.tableDatakey = res.data.eleName || {}
                     // this.tableShow = false

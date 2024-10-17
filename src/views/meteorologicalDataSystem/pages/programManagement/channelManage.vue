@@ -137,7 +137,7 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/channel/page`, this.params).then(res => {
+            this.$http.post(`/channel/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
@@ -165,7 +165,7 @@ export default {
                 pageNum: 1,
                 pageSize: 999,
             }
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.tableDataSort = res.data.records || []
@@ -189,7 +189,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/channel/del?id=${row.id}`).then(res => {
+                this.$http.post(`/channel/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: '删除成功', type: 'success' })
@@ -216,7 +216,7 @@ export default {
                     this.ruleForm.userId = this.$store.state.userId
                     this.dialogLoading = true
                     if (this.type == 'edit'){
-                        this.$http.post(`${this.$api.server}/channel/mod`, this.ruleForm).then(res => {
+                        this.$http.post(`/channel/mod`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -227,7 +227,7 @@ export default {
                             }
                         })
                     } else {
-                        this.$http.post(`${this.$api.server}/channel/save`, this.ruleForm).then(res => {
+                        this.$http.post(`/channel/save`, this.ruleForm).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -245,7 +245,7 @@ export default {
         submitSort(){
             let data = this.tableDataSort.map(item => item.id)
             this.dialogLoading = true;
-            this.$http.post(`${this.$api.server}/channel/sort`, data).then(res => {
+            this.$http.post(`/channel/sort`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
