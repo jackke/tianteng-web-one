@@ -1,8 +1,8 @@
 <template>
     <div class="login-box">
-     
         <div class="text">
-            <h1>气象影视数据服务系统</h1>
+            <div ref="chartText" style="width: 100%; height: 100px;"></div>
+            <!-- <h1>气象影视数据服务系统</h1> -->
         </div>
         <div class="form-login">
             <div style="text-align: center;">
@@ -35,7 +35,8 @@
 <script>
 
 import "../utils/vendors.js"
-import demo5 from "../utils/demo5.js"
+import * as echarts from 'echarts'
+// import demo5 from "../utils/demo5.js"
 import $ from 'jquery'
 // import Particles from "@/assets/js/particles.js"
     export default {
@@ -69,9 +70,64 @@ import $ from 'jquery'
       },
       created(){},
       mounted(){
-        demo5()
+        // demo5()
+        this.$nextTick(() => {
+            this.initText()
+        })
       },
       methods: {
+        initText(){
+            let myChart = echarts.init(this.$refs.chartText);
+            let options = {
+                graphic: {
+                    elements: [
+                        {
+                            type: 'text',
+                            left: 'center',
+                            top: 'center',
+                            style: {
+                                text: '气象影视数据服务系统',
+                                fontSize: 80,
+                                fontWeight: 'bold',
+                                lineDash: [0, 200],
+                                lineDashOffset: 0,
+                                fill: 'transparent',
+                                stroke: '#03dac6',
+                                lineWidth: 1
+                            },
+                            keyframeAnimation: {
+                                duration: 3000,
+                                loop: false,
+                                keyframes: [
+                                    {
+                                        percent: 0.7,
+                                        style: {
+                                            fill: 'transparent',
+                                            lineDashOffset: 200,
+                                            lineDash: [200, 0]
+                                        }
+                                    },
+                                    {
+                                        // Stop for a while.
+                                        percent: 0.8,
+                                        style: {
+                                            fill: 'transparent'
+                                        }
+                                    },
+                                    {
+                                        percent: 1,
+                                        style: {
+                                            fill: '#03dac6'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+            myChart.setOption(options)
+        },
         onSubmit(){
             // this.$router.replace({path:'/meteorologicalDataSystem'})
             // return false
@@ -121,7 +177,12 @@ $--color: rgba(#00F0FF, 0.6);
 .login-box{
     width: 100%;
     height: 100%;
-    /* background-image: url('@/assets/login/xingkong.jpeg'); */
+    background-image: url('../assets/image/xingkong.png');
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .text{
         width: 100%;
         text-align: center;
@@ -162,7 +223,7 @@ $--color: rgba(#00F0FF, 0.6);
 }
 .form-login{
     width: 22%;
-    margin: 20% auto;
+    // margin: 20% auto;
     padding: 10px 50px;
     backdrop-filter: blur(3px);
     background: rgba(#FFF, .3);

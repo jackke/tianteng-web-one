@@ -400,6 +400,19 @@ $_labelColor:#D8FBFD;
     }
 }
 
+/* 弹框 */
+.el-message-box{
+    background-color: rgba(#16395A, 1);
+    border: 0;
+    padding: 10px;
+    .el-message-box__title{
+        color: #fff;
+    }
+    .el-message-box__content{
+        color: #fff;
+    }
+}
+
 /* 滚动条 */
 ::-webkit-scrollbar {
     width: 5px;
