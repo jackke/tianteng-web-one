@@ -592,7 +592,22 @@ export default {
         },
         onDataSort(){
             this.dialogVisibleSort = true
-            this.tableDataSort = [...this.tableData]
+            let params = {
+                channelName: this.params.channelName,
+                channelId: this.params.channelId,
+                name: "",
+                status: null,
+                pageNum: 1,
+                pageSize: 9999,
+            }
+            this.$http.post(`/column/page`, params).then(res => {
+                this.tableLoading = false
+                    if(res.code == 200) {
+                        this.tableDataSort = res.data.records || []
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
         },
         handleClose(){
             this.dialogVisible = false

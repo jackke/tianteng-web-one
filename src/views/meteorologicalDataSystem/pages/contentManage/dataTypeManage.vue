@@ -41,9 +41,9 @@
                                 <el-dropdown-item command="dataEdit">编辑</el-dropdown-item>
                                 <el-dropdown-item command="dataRecalculate">回算</el-dropdown-item>
                                 <el-dropdown-item command="datalog">日志</el-dropdown-item>
-                                <el-dropdown-item command="startStop-1" v-if="scope.row.state == 2" divided>启用</el-dropdown-item>
+                                <!-- <el-dropdown-item command="startStop-1" v-if="scope.row.state == 2" divided>启用</el-dropdown-item>
                                 <el-dropdown-item command="startStop-2" v-if="scope.row.state == 1" divided>禁用</el-dropdown-item>
-                                <el-dropdown-item command="dataDelete">删除</el-dropdown-item>
+                                <el-dropdown-item command="dataDelete">删除</el-dropdown-item> -->
                             </el-dropdown-menu>
                         </el-dropdown>
                         <!-- <el-button size="medium" type="danger" v-if="scope.row.state == 1" @click="stateClick(scope.row, 2)">禁用</el-button>
@@ -384,7 +384,7 @@ export default {
                     tagList.push({status: false, name: row[key]})
                 }
             }
-            console.log(row);
+            // console.log(row);
             this.ruleForm = {
                 name: row.typeName,
                 status: row.status || 1,
@@ -583,7 +583,7 @@ export default {
                         })
                     }
                     if(this.submitType == 'edit'){
-                        this.$http.post(`/site/mod`, data).then(res => {
+                        this.$http.put(`/town/type/mod`, data).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.dataDialogClose()

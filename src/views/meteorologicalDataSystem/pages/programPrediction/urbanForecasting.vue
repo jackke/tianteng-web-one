@@ -23,24 +23,24 @@
                 <el-button icon="el-icon-printer" type="warning" @click="dialogVisible = true">打印</el-button>
             </el-form-item>
         </el-form>
-       <div style="flex: 1;display: flex; flex-direction: column;overflow-y: auto;padding-bottom: 30px;">
-            <!-- 标题 -->
-            <div class="title-text">
-                <div v-for="(item, index) in titleList" :key="index"> 
-                    <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
-                </div>
+       <div style="flex: 1; box-sizing: border-box; overflow: auto; height: calc(100% - 100px);">
+            <div style="padding-bottom: 30px;">
+                    <!-- 标题 -->
+                    <div class="title-text">
+                        <div v-for="(item, index) in titleList" :key="index"> 
+                            <div style="width: 120px;">{{item.title}}：</div> <p style="flex: 1;">{{ item.value}}</p>
+                        </div>
+                    </div>
+                    <!-- 列表 -->
+                    <el-table class="element-table" :data="tableData" v-loading="tableLoading" style="width: 100%;" :header-cell-style="tableHeaderStyle"  element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                        <el-table-column type="index" label="序号" width="55" fixed></el-table-column>
+                        <el-table-column prop="siteId" label="站点编号"> </el-table-column>
+                        <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]">
+                        </el-table-column>
+                    </el-table>
             </div>
-            <!-- 列表 -->
-            <el-table class="element-table" :data="tableData" v-loading="tableLoading" height="100%" style="width: 100%;" :header-cell-style="tableHeaderStyle"  element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="序号" width="55" fixed></el-table-column>
-                <el-table-column prop="siteId" label="站点编号"> </el-table-column>
-                <el-table-column v-for="(item, index) in Object.keys(tableDatakey)" :key="index" :prop="item" :label="tableDatakey[item]">
-                </el-table-column>
-            </el-table>
-       </div>
-       <div style="padding-top: 10px; position: absolute; width: 100%; bottom: 0; left:0; z-index: 9; background: #102041;">
             <ComPagination :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
-        </div>
+       </div>
        <el-dialog :visible.sync="dialogVisible" width="100%" top="0%" :fullscreen="true" :modal-append-to-body="false" :append-to-body="false">
             <div style="display: flex; flex-direction: column; width: 100%;height: 100vh;">
                 <div id="tablePrint" style="flex: 1;">

@@ -83,12 +83,12 @@
                 <el-form-item label="邮箱：" prop="email">
                     <el-input v-model="ruleForm.email" placeholder="请输入邮箱"></el-input>
                 </el-form-item>
-                <el-form-item label="是否是审核人员：" required>
+                <!-- <el-form-item label="是否是审核人员：" required>
                     <el-radio-group v-model="ruleForm.review">
                         <el-radio :label="1">是</el-radio>
                         <el-radio :label="2">不是</el-radio>
                     </el-radio-group>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="性别：" required>
                     <el-radio-group v-model="ruleForm.sex">
                         <el-radio :label="1">男</el-radio>
@@ -141,7 +141,7 @@ export default {
                 mobile: '',
                 email: '',
                 review: 1,
-                roleId: '',
+                roleId: 0,
                 sex: 1,
                 state: 1
             },
@@ -185,6 +185,7 @@ export default {
         userAdd(){
             this.submitType = 'add'
             this.dialogVisible = true
+
         },
         initType(){
             this.$http.get(`/user/list`).then(res => {
@@ -323,6 +324,18 @@ export default {
         },
         handleClose(){
             this.dialogVisible = false
+            this.ruleForm = {
+                cardId: "",
+                account: "",
+                name: "",
+                mobile: '',
+                email: '',
+                review: 1,
+                roleId: '',
+                sex: 1,
+                state: 1
+            }
+            this.$refs['ruleForm'].resetFields();
         },
         handleCurrentChange(num){
             this.params.pageNum = num
