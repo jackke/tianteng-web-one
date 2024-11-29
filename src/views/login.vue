@@ -1,13 +1,8 @@
 <template>
     <div class="login-box">
-        <div class="nav">
-            <!-- <canvas class="background" id="snowCanvas" style="width: 100vw;height: 100vh;"></canvas> -->
-            <!-- <div style="height: 65%"> </div>
-            <div style="height: 35%;" class="reflection"> </div>
-            <svg><filter id="fractal" filterUnits="objectBoundingBox" x="0%" y="0%" width="100%" height="100%"><feTurbulence id="turbulence" type="fractalNoise" baseFrequency="0.005 0.005" numOctaves="10"><animate attributeName="baseFrequency" dur="30s" values="0.005 0.005;0.05 0.3;0.005 0.005" repeatCount="indefinite"></animate></feTurbulence><feDisplacementMap in="SourceGraphic" scale="15"></feDisplacementMap></filter></svg> -->
-        </div>
         <div class="text">
-            <h1>天腾气象影视数据产品生产系统</h1>
+            <div ref="chartText" style="width: 100%; height: 100px;"></div>
+            <!-- <h1>气象影视数据服务系统</h1> -->
         </div>
         <div class="form-login">
             <div style="text-align: center;">
@@ -22,7 +17,7 @@
                 </el-form-item>
                 <el-form-item  prop="password" class="password">
                     <div class="input-box">
-                        <input type="password" v-model="form.password" required>
+                        <input type="password" v-model="form.password" required @keydown.enter="onSubmit">
                         <label>Password</label>
                     </div>
                 </el-form-item>
@@ -39,8 +34,10 @@
 
 <script>
 
-import "../utils/demo5.js"
 import "../utils/vendors.js"
+import * as echarts from 'echarts'
+// import demo5 from "../utils/demo5.js"
+import $ from 'jquery'
 // import Particles from "@/assets/js/particles.js"
     export default {
       name: 'login',
@@ -66,16 +63,71 @@ import "../utils/vendors.js"
       },
       beforeDestroy(){
         console.log("销毁 login");
+        // 销毁 dom 元素，防止性能损耗
+        if ($('body > canvas')[0]){
+            $('body > canvas')[0].remove();
+        }
       },
       created(){},
       mounted(){
-        // this.$nextTick(() => {
-        //     const ctx = document.getElementById('snowCanvas').getContext('2d');
-        //     // drawCanvas(ctx)
-        //     this.initCanvas()
-        // })
+        // demo5()
+        this.$nextTick(() => {
+            this.initText()
+        })
       },
       methods: {
+        initText(){
+            let myChart = echarts.init(this.$refs.chartText);
+            let options = {
+                graphic: {
+                    elements: [
+                        {
+                            type: 'text',
+                            left: 'center',
+                            top: 'center',
+                            style: {
+                                text: '气象影视数据服务系统',
+                                fontSize: 80,
+                                fontWeight: 'bold',
+                                lineDash: [0, 200],
+                                lineDashOffset: 0,
+                                fill: 'transparent',
+                                stroke: '#03dac6',
+                                lineWidth: 1
+                            },
+                            keyframeAnimation: {
+                                duration: 3000,
+                                loop: false,
+                                keyframes: [
+                                    {
+                                        percent: 0.7,
+                                        style: {
+                                            fill: 'transparent',
+                                            lineDashOffset: 200,
+                                            lineDash: [200, 0]
+                                        }
+                                    },
+                                    {
+                                        // Stop for a while.
+                                        percent: 0.8,
+                                        style: {
+                                            fill: 'transparent'
+                                        }
+                                    },
+                                    {
+                                        percent: 1,
+                                        style: {
+                                            fill: '#03dac6'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            }
+            myChart.setOption(options)
+        },
         onSubmit(){
             // this.$router.replace({path:'/meteorologicalDataSystem'})
             // return false
@@ -87,7 +139,7 @@ import "../utils/vendors.js"
                         // password: (CryptoJS.MD5(this.form.password).toString()).toUpperCase()
                         password: this.form.password
                     }
-                    this.$http.post(`${this.$api.server}/user/login`, data).then(res => {
+                    this.$http.post(`/user/login`, data).then(res => {
                         this.loading = false
                         if (res.code == 200){
                             let menuList = res.data.menuList
@@ -106,6 +158,7 @@ import "../utils/vendors.js"
                             this.$message.error(res.message)
                         }
                     }).catch((error) => {
+                        this.loading = false
                         this.$message.error(error)
                     })
                 } else {
@@ -114,34 +167,22 @@ import "../utils/vendors.js"
                 }
             });
         },
-        // 背景动画
-        initCanvas(){
-            Particles.init({
-                selector: ".background",
-                color: ["#03dac6", "#ff0266", "#86A8E7"],
-                connectParticles: true,
-                responsive: [
-                {
-                    breakpoint: 800,
-                    options: {
-                    color: "#ff0266",
-                    maxParticles: 43,
-                    connectParticles: false
-                    }
-                }
-                ]
-            });
-        }
     }
 }
 </script>
 <!-- <style src="../style/login.css"> </style> -->
 <style scoped lang="scss">
-$--color: #efd28e;
+// $--color: #efd28e;
+$--color: rgba(#00F0FF, 0.6);
 .login-box{
     width: 100%;
     height: 100%;
-    /* background-image: url('@/assets/login/xingkong.jpeg'); */
+    background-image: url('../assets/image/xingkong.png');
+    background-position: 100% 100%;
+    background-repeat: no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .text{
         width: 100%;
         text-align: center;
@@ -182,7 +223,7 @@ $--color: #efd28e;
 }
 .form-login{
     width: 22%;
-    margin: 20% auto;
+    // margin: 20% auto;
     padding: 10px 50px;
     backdrop-filter: blur(3px);
     background: rgba(#FFF, .3);
@@ -214,7 +255,7 @@ $--color: #efd28e;
             top: -5px;
         }
         input {
-            width: 100%;
+            // width: 100%;
             height: 40px;
             background: transparent;
             border: none;
@@ -222,6 +263,11 @@ $--color: #efd28e;
             color: #fff;
             // font-size: 1rem;
             padding: 0 35px 0 5px;
+        }
+        input:-webkit-autofill {
+            -webkit-text-fill-color: #fff !important; // 文字
+            -webkit-box-shadow: none !important; // 自动填充色
+            transition: background-color 5000s ease-in-out 0s;
         }
         .icon {
             position: absolute;
@@ -255,7 +301,7 @@ $--color: #efd28e;
     width: 100%;
     background-color: $--color;
     border-color: $--color;
-    color: #000;
+    color: #fcfcfc;
     margin-top: 20px;
 
 }

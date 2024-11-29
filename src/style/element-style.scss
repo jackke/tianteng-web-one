@@ -113,8 +113,12 @@ $_labelColor:#D8FBFD;
     .el-date-table tr, .el-date-table tbody tr:nth-child(even) {
         background-color: transparent !important;
     }
+    .el-input__inner{
+        background-color: #006092 !important;
+        color: #fff;
+    }
 }
-.mars-date, .mars-date-position{
+.mars-date-position{
     top: auto !important;
     left: auto !important;
 }
@@ -127,8 +131,22 @@ $_labelColor:#D8FBFD;
     background-color: #093366 !important;
     border-color: #093366 !important;
     .el-select-dropdown__item{
-        color: #fff !important;
+        color: #fff;
     }
+    .el-select-dropdown__item.selected{
+        // color: $_textColor;
+        background-color: transparent !important;
+    }
+    // .el-select-dropdown__item.selected::after{
+    //     position: absolute;
+    //     right: 20px;
+    //     font-family: element-icons;
+    //     content: "\e6da";
+    //     font-size: 12px;
+    //     font-weight: 700;
+    //     -webkit-font-smoothing: antialiased;
+    // }
+
     .el-select-dropdown__item.hover, .el-select-dropdown__item:hover{
         color: $_textColor !important;
         background-color: $_backColor !important;
@@ -320,6 +338,9 @@ $_labelColor:#D8FBFD;
             color: #00E4FF;
         }
     }
+    .el-cascader-node:not(.is-disabled):focus, .el-cascader-node:not(.is-disabled):hover{
+        background-color:$_backColor;
+    }
 }
 
 /* 折叠面板 */
@@ -362,8 +383,8 @@ $_labelColor:#D8FBFD;
 }
 /* 弹框 */
 .el-dialog{
-    // background-color: #152C49;
-    background-image: linear-gradient(to bottom, #16395A, #327278);
+    background-color: #16395A;
+    // background-image: linear-gradient(to bottom, #16395A, #327278);
     .el-dialog__header{
         border-bottom: 1px solid rgba($_textColor, .5);
     }
@@ -376,6 +397,19 @@ $_labelColor:#D8FBFD;
     }
     .el-form-item__label{
         color: $_labelColor;
+    }
+}
+
+/* 弹框 */
+.el-message-box{
+    background-color: rgba(#16395A, 1);
+    border: 0;
+    padding: 10px;
+    .el-message-box__title{
+        color: #fff;
+    }
+    .el-message-box__content{
+        color: #fff;
     }
 }
 

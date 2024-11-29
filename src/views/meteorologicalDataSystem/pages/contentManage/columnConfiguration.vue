@@ -1,9 +1,9 @@
-<!-- 栏目配置 -->
+<!-- 栏目配置 无接口，废弃-->
 <template>
     <div class="columnConfiguration">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" size="small">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="站点别名：">
-                <el-input v-model="params.name" placeholder="请输入站点别名"></el-input>
+                <el-input v-model.trim="params.name" placeholder="请输入站点别名"></el-input>
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary">查 询</el-button>
@@ -12,24 +12,24 @@
         </el-form>
 
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" :data="tableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+            <el-table id="tablePrint" class="element-table" height="100%" :data="tableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="date" label="站点名称"> </el-table-column>
                 <el-table-column prop="date" label="站点别名"> </el-table-column>
                 <el-table-column prop="date" label="创建时间"> </el-table-column>
                 <el-table-column prop="date" label="更新时间"> </el-table-column>
                 <el-table-column label="操作"  width="50">
                     <template slot-scope="scope">
-                        <el-button size="small"  type="text" @click="edit(scope.row)">保 存</el-button>
+                        <el-button size="medium"  type="text" @click="edit(scope.row)">保 存</el-button>
                     </template>
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;"></ComPagination>
         </div>
 
-        <el-dialog title="选择站点：" class="column-dialog" :visible.sync="dialogVisible" width="50%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="选择站点：" class="column-dialog" :visible.sync="dialogVisible" width="50%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div>
-                <el-form class="element-input" :inline="true" ref="ruleForm" :model="ruleForm" size="small">
+                <el-form class="element-input" :inline="true" ref="ruleForm" :model="ruleForm" size="medium">
                     <el-form-item label="站点编号：">
                         <el-input v-model="ruleForm.site" placeholder="请输入站点号" clearable></el-input>
                     </el-form-item>
@@ -42,7 +42,7 @@
                 </el-form>
                 <el-table ref="siteTableDataRef" tooltip-effect="dark" @selection-change="handleSelectionChange" class="element-table" :data="siteTableData" v-loading="tableLoading" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
                     <el-table-column type="selection" width="55"> </el-table-column>
-                    <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                    <el-table-column type="index" label="序号" width="55"> </el-table-column>
                     <el-table-column prop="code" label="站点编号"> </el-table-column>
                     <el-table-column prop="name" label="站点名称"> </el-table-column>
                     <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
@@ -54,7 +54,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
             </div>
             <div slot="footer" style="text-align: center;">
                 <el-button @click="handleClose">取 消</el-button>
@@ -62,10 +61,10 @@
             </div>
         </el-dialog>
 
-        <el-dialog title="站点设置：" class="column-dialog" :visible.sync="dialogVisibleSet" width="30%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="站点设置：" class="column-dialog" :visible.sync="dialogVisibleSet" width="30%" top="3px" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div>
                 <el-table class="element-table" :data="siteSetTableData">
-                    <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                    <el-table-column type="index" label="序号" width="55"> </el-table-column>
                     <el-table-column prop="code" label="站点编号"> </el-table-column>
                     <el-table-column prop="name" label="站点名称"> </el-table-column>
                     <el-table-column prop="state" label="站点别名"> 
@@ -109,6 +108,7 @@ export default {
             rules:{
 
             },
+            tableLoading: false,
             dialogVisible: false,
             dialogVisibleSet: false,
         }
@@ -123,7 +123,7 @@ export default {
         },
         siteInitData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/site/page`, this.ruleForm).then(res => {
+            this.$http.post(`/site/page`, this.ruleForm).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.siteTableData = res.data.records || []
@@ -197,7 +197,9 @@ export default {
         border-bottom: 0;
     }
 
-  
+    .el-dialog__wrapper{
+        height: 100vh;
+    }
 }
 
 </style>

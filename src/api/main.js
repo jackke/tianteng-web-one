@@ -1,18 +1,17 @@
 import server from "@/api/request.js";
 import qs from "qs";
-import axios from "axios";
-import { dict } from "@/utils/base";
 import Vue from 'vue';
 
-const ip = dict.ADMIN_URL;
+const API_URL = process.env.VUE_APP_BASE_URL;
+
 //登录
 export const login = data => {
-  return server.post(ip + "/auth/login", qs.stringify(data));
+  return server.post(API_URL + "/auth/login", qs.stringify(data));
 };
 
 export const httpPost = (url, data) => {
   return new Promise((reject, resolve) => {
-      server.post(url, data)
+      server.post(`${API_URL }${url}`, data)
         .then(resolue => {
           reject(resolue.data)
         })
@@ -23,7 +22,7 @@ export const httpPost = (url, data) => {
 }
 export const httpGet = (url, params) => {
   return new Promise((reject, resolve) => {
-      server.get(url, { params })
+      server.get(`${API_URL }${url}`, { params })
         .then(resolue => {
           reject(resolue.data)
         })
@@ -35,7 +34,7 @@ export const httpGet = (url, params) => {
 
 export const httpPut = (url, data) => {
   return new Promise((reject, resolve) => {
-    server.put(url, data)
+    server.put(`${API_URL }${url}`, data)
       .then(resolue => {
         reject(resolue.data)
       })
@@ -47,7 +46,7 @@ export const httpPut = (url, data) => {
 
 export const httpDelete = (url, params) => {
   return new Promise((reject, resolve) => {
-      server.delete(url, { params })
+      server.delete(`${API_URL }${url}`, { params })
         .then(resolue => {
           reject(resolue.data)
         })
@@ -58,18 +57,32 @@ export const httpDelete = (url, params) => {
 }
 
 export const httpGetFile = (url, params) => {
-  return new Promise((reject, resolve) => {
-    server({
-        url: url,
-        method: 'GET',
-        params: params,
-        responseType: 'blob'
-    }).then(resolue => {
-        reject(resolue)
-    }).catch(error => {
-        resolve(error)
-    });
-  })
+    return new Promise((reject, resolve) => {
+        server({
+            url: `${API_URL }${url}`,
+            method: 'GET',
+            params: params,
+            responseType: 'blob'
+        }).then(resolue => {
+            reject(resolue)
+        }).catch(error => {
+            resolve(error)
+        });
+    })
+}
+export const httpPostFile = (url, params) => {
+    return new Promise((reject, resolve) => {
+        server({
+            url: `${API_URL }${url}`,
+            method: 'POST',
+            params: params,
+            responseType: 'blob'
+        }).then(resolue => {
+            reject(resolue)
+        }).catch(error => {
+            resolve(error)
+        });
+    })
 }
 
 let http = {
@@ -78,6 +91,7 @@ let http = {
   put: httpPut,
   delete: httpDelete,
   getFile: httpGetFile,
+  postFile: httpPostFile
 }
 
 Vue.prototype.$http = http

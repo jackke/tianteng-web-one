@@ -3,7 +3,7 @@
     <div class="userMenu">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="角色名称：">
-               <el-input v-model="params.name" placeholder="请输入角色名称" clearable></el-input>
+               <el-input v-model.trim="params.name" placeholder="请输入角色名称" clearable></el-input>
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查询</el-button>
@@ -11,8 +11,8 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="name" label="角色名称"> </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
                 <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
@@ -25,8 +25,8 @@
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="角色分配菜单" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <div>
+       <el-dialog title="角色分配菜单" :visible.sync="dialogVisible" width="35%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <div style="height: 500px; overflow-y: auto;">
                 <el-form  class="element-input" ref="ruleForm" :model="ruleForm" :rules="rules" size="medium" label-width="100px">
                     <el-form-item label="角色名称：" v-if="type == 'add'" key="name" prop="name">
                         <el-input v-model="ruleForm.name" placeholder="请输入角色名称" clearable style="width: 200px;"></el-input> 
@@ -98,11 +98,12 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            // this.$http.get(`${this.$api.server}/user/list`).then(res => {
-            this.$http.post(`${this.$api.server}/role/page`, this.params).then(res => {
+            // this.$http.get(`/user/list`).then(res => {
+            this.$http.post(`/role/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
+                        this.total = res.data.total || 0
                     } else {
                         this.$message.error(res.message)
                     }
@@ -149,9 +150,25 @@ export default {
             ]
             this.getMenu(row.roleId)
         },
+        dataDelete(row){
+            this.$confirm(`是否确认删除该角色？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                this.$http.post(`/role/del?id=${row.roleId}`).then(res => {
+                    if(res.code == 200) {
+                        this.initData()
+                        this.$message({ message: `删除成功`, type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
+            }).catch(err => {})
+        },
         // -------------------------       tree start         ---------------------------------------
         getMenu(id){
-            this.$http.get(`${this.$api.server}/role/info/${id}`).then(res => {
+            this.$http.get(`/role/info/${id}`).then(res => {
                     if(res.code == 200) {
                         this.$nextTick(() => {
                             this.$refs.tree.setCheckedKeys(res.data.menuIdList || []);
@@ -167,7 +184,7 @@ export default {
                 resolve(this.ruleForm.treeData)
             }
             if (node.level == 1) {
-                this.$http.get(`${this.$api.server}/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
+                this.$http.get(`/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
                     if(res.code == 200) {
                         menuList = res.data || []
                         resolve(menuList)
@@ -178,7 +195,7 @@ export default {
                 })
             }
             if (node.level == 2 || node.level == 3) {
-                this.$http.get(`${this.$api.server}/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
+                this.$http.get(`/menu/list?pId=${node.key ? node.key : ''}`).then(res => {
                     if(res.code == 200) {
                         let list = res.data || []
                         resolve(list[0].child)
@@ -209,7 +226,7 @@ export default {
                             menuIdList: getkey
                     }
                     if (this.type == 'add'){
-                            this.$http.post(`${this.$api.server}/role/save`, data).then(res => {
+                            this.$http.post(`/role/save`, data).then(res => {
                                 if(res.code == 200) {
                                     this.handleClose()
                                     this.params.pageNum = 1
@@ -220,7 +237,7 @@ export default {
                                 }
                             })
                     } else if (this.type == 'edit'){
-                            this.$http.post(`${this.$api.server}/role/mod`, data).then(res => {
+                            this.$http.post(`/role/mod`, data).then(res => {
                                 if(res.code == 200) {
                                     this.handleClose()
                                     this.params.pageNum = 1
@@ -316,6 +333,8 @@ $_color: #00E4FF;
         z-index: inherit;
     }
 }
-
+.el-dialog__wrapper{
+    height: 100vh;
+}
 
 </style>

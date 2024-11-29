@@ -2,14 +2,14 @@
 <template>
     <div class="channeAllocation">
         <el-row :gutter="20">
-            <el-col :span="12">
+            <el-col :span="8">
                 <el-card class="box-card" style="margin: 0 20px 0 0; flex: 1; ">
                     <div style="padding-bottom: 20px; max-height: 80vh; overflow: auto;">
                         <el-tree class="card-tree" :data="userData"  :props="treeProps" lazy :load="loadNode" default-expand-all></el-tree>
                     </div>
                 </el-card>
             </el-col>
-            <el-col :span="12">
+            <el-col :span="16">
                 <el-card class="box-card" style="margin: 0 20px 0 0; flex: 1; ">
                     <div slot="header" class="clearfix">
                         <span>用户频道栏目配置</span>
@@ -21,7 +21,7 @@
                             <div>2. 选择频道列表或点击频道名称可配置管理该频道的用户</div>
                             <div>3. 点击用户名可配置该用户可管理的频道栏目</div>
                         </div>
-                        <div class="title" style="margin-top: 50px;">您已选择频道栏目：<span style="display: inline-block; width: 120px;">{{ this.params.channelName }}</span></div>
+                        <div class="title" style="margin-top: 50px;">您已选择频道栏目：<span style="display: inline-block; width: 120px;">{{ selectChannelName }}</span></div>
                         <div style="font-size: 14px;text-align: center;" class="element-input">
                             <el-autocomplete
                                 class="inline-input"
@@ -47,7 +47,7 @@
                             ></el-transfer>
                         </div>
                         <div style="margin-top: 20px; text-align: center;">
-                            <el-button size="small"  type="primary" @click="saveData">设 置</el-button>
+                            <el-button size="medium"  type="primary" @click="saveData">设 置</el-button>
                         </div>
                     </div>
                 </el-card>
@@ -67,6 +67,7 @@ export default {
                 channelId: '',
                 type: []
             },
+            selectChannelName: '',
             channelTitle: '',
             channelOption: [],
             transferValue: [],
@@ -118,7 +119,7 @@ export default {
                 roleId: '',
                 state: 1
             }
-            this.$http.post(`${this.$api.server}/user/page`,params).then(res => {
+            this.$http.post(`/user/page`,params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.userData = res.data.records || []
@@ -130,7 +131,7 @@ export default {
         loadNode(node, resolve){
             let data = node.data
             if (node.level == 1){
-                this.$http.get(`${this.$api.server}/channel/userchannel/${data.id}`).then(res => {
+                this.$http.get(`/channel/userchannel/${data.id}`).then(res => {
                     if(res.code == 200) {
                         if (res.data && res.data.length == 0){
                             resolve([])
@@ -158,6 +159,10 @@ export default {
         },
         saveData(){
             console.log(this.transferValue);
+            if (!this.params.channelId){
+                this.$message.error('请您选择频道')
+                return false
+            }
             this.$confirm(`是否确认保存该设置？`, '提示', {
                 confirmButtonText: '确定',
                 cancelButtonText: '取消',
@@ -169,7 +174,7 @@ export default {
                     userId: this.$store.state.userId,
                     userList: this.transferValue,
                 }
-                this.$http.post(`${this.$api.server}/channel/adduser`, data).then(res => {
+                this.$http.post(`/channel/adduser`, data).then(res => {
                     if(res.code == 200) {
                         this.initUsetData()
                         this.treeDefaultKeys = this.transferValue
@@ -184,6 +189,7 @@ export default {
         handleSelect(value){
             this.params.channelName = value.name;
             this.params.channelId = value.id;
+            this.selectChannelName = value.name
             this.transferData = this.userData.map(item =>{
                 return {
                     label: item.name,
@@ -193,7 +199,7 @@ export default {
             this.initChannelUser(value.id)
         },
         initChannelUser(id){
-            this.$http.get(`${this.$api.server}/channel/channeluser/${id}`).then(res => {
+            this.$http.get(`/channel/channeluser/${id}`).then(res => {
                 if(res.code == 200) {
                     let list = res.data || []
                     this.transferValue = list.map(item => item.id)
@@ -203,7 +209,7 @@ export default {
             })
         },
         channelChange(){
-            this.params.channelId = ''
+            // this.params.channelId = ''
         },
         initChannelOption(value, cd){
             let params = {
@@ -212,7 +218,7 @@ export default {
                 pageNum: 1,
                 pageSize: 10,
             }
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 let records = []
                 if(res.code == 200) {
                     records = res.data.records || []

@@ -5,7 +5,7 @@
                 <div>{{ BjTime }}</div>
             </div>
             <div class="middle">
-                <div class="titleText">“天腾”气象影视数据产品生产系统 </div>
+                <div class="titleText"><h2>“天腾”气象影视数据产品生产系统</h2></div>
                 <!-- 左侧导航 -->
                 <div class="leftNav" v-show="token">
                     <div v-for="(item, index) in leftNavList" :key="index">
@@ -33,7 +33,7 @@
                 </el-dropdown>
             </div>
         </div>
-        <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="修改密码" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="demo-ruleForm">
                 <el-form-item label="原密码：" prop="oldPass">
                     <el-input v-model="ruleForm.oldPass" placeholder="请输入原密码"></el-input>
@@ -139,7 +139,7 @@ export default {
                     this.dialogLoading = true
                     let data = {...this.ruleForm}
                     data.id = this.$store.state.userId
-                    this.$http.post(`${this.$api.api}/user/mypwd/mod`, data).then(res => {
+                    this.$http.post(`/user/mypwd/mod`, data).then(res => {
                         this.dialogLoading = false
                         if (res.code == 200){
                             this.handleClose()
@@ -162,7 +162,10 @@ export default {
                 this.dialogVisible = true
             }
             if (value == 'out'){
-                this.$http.post(`${this.$api.api}/user/exit`, {account: this.$store.state.userAccount}).then(res => {
+                // sessionStorage.clear()
+                // localStorage.clear()
+                // this.$router.push('/login')
+                this.$http.post(`/user/exit`, {account: this.$store.state.userAccount}).then(res => {
                     if(res.code == 200) {
                         this.$router.push('/login')
                         sessionStorage.clear()
@@ -195,8 +198,9 @@ export default {
 
 
 .commonTitle {
+    height: 100%;
     .titleContent {
-        height: 90px;
+        height: 90%;
         background-image: url('@/assets/image/commonTitle/heder-bg.png');
         background-repeat: no-repeat;
         background-size: 100% 100%;
@@ -236,14 +240,14 @@ export default {
         .titleText {
             // width: 500px;
             text-align: center;
-            font-size: 32px;
+            // font-size: 31px;
             font-weight: bold;
             // color: #FFFFFF;
             background: linear-gradient(0deg, #00F6FF 20%, #FFFFFF 60%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            padding-top: 22px;
-            padding-right: 20px;
+            padding-top: 12px;
+            padding-right: 25px;
         }
         .navTextStyle {
             width: 200px;

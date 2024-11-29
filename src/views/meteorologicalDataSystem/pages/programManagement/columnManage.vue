@@ -1,7 +1,7 @@
 <!-- 栏目管理 -->
 <template>
     <div class="columnManage">
-        <el-form class="element-input" :inline="true" ref="params" :model="params" label-width="100px" size="medium">
+        <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="频道名称：">
                 <el-autocomplete
                     class="inline-input"
@@ -22,7 +22,7 @@
             </el-form-item>
             <el-form-item label="状态：">
                 <el-select v-model="params.status" placeholder="请选择" popper-class="mars-select" style="width: 100px;">
-                    <el-option label="全部" value=""></el-option>
+                    <el-option label="全部" :value="null"></el-option>
                     <el-option label="启用" :value="1"></el-option>
                     <el-option label="禁用" :value="2"></el-option>
                 </el-select>
@@ -34,8 +34,8 @@
             </el-form-item>
         </el-form>
         <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table class="element-table" v-loading="tableLoading" :data="tableData" empty-text="请先切换“频道名称”进行查询数据" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column prop="sort" label="顺序" style="text-align: center;"> </el-table-column>
+            <el-table class="element-table" height="100%" v-loading="tableLoading" :data="tableData" empty-text="请先切换“频道名称”进行查询数据" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                <el-table-column type="index" label="序号" style="text-align: center;"> </el-table-column>
                 <el-table-column prop="channelName" label="所属频道"> </el-table-column>
                 <el-table-column prop="name" label="栏目名称"> </el-table-column>
                 <el-table-column prop="description" label="描述"></el-table-column>
@@ -46,123 +46,158 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
-                <el-table-column label="操作" width="500">
+                <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
-                        <!-- <el-button size="small"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button>
-                        <el-button size="small"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
-                        <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisible', 1)">编辑</el-button>
+                        <el-dropdown @command="(val) =>handleCommand(val, scope.row)" trigger="click">
+                            <el-button type="primary" size="medium">
+                                更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown">
+                                <el-dropdown-item command="dialogVisible">编辑栏目</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleOne" >配置栏目</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleElement" divided>要 素</el-dropdown-item>
+                                <el-dropdown-item command="dialogVisibleSite">站 点</el-dropdown-item>
+                                <el-dropdown-item command="columnTransfer">转 移</el-dropdown-item>
+                                <el-dropdown-item command="columnDelete">删 除</el-dropdown-item>
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <!-- <el-button size="medium"  type="success" @click="userEnDis(scope.row, 1)" v-if="scope.row.state == 2">启用</el-button>
+                        <el-button size="medium"  type="danger" @click="userEnDis(scope.row, 2)" v-if="scope.row.state == 1">禁用</el-button> -->
+                        <!-- <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisible', 1)">编辑</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleOne', 2)">编辑1</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleElement', 3)">要素</el-button>
                         <el-button size="medium" type="primary" @click="columnEdit(scope.row, 'dialogVisibleSite', 4)">站点</el-button>
                         <el-button size="medium" type="primary" @click="columnTransfer(scope.row)">转移</el-button>
-                        <el-button size="medium" type="danger" @click="columnDelete(scope.row)">删除</el-button>
+                        <el-button size="medium" type="danger" @click="columnDelete(scope.row)">删除</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
-            <ComPagination style="margin-top: 20px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
+            <ComPagination style="margin-top: 10px;" @current-change="handleCurrentChange" @size-change="handleSizeChange" :total="total"></ComPagination>
         </div>
          <!--  编辑栏目 -->
-        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :visible.sync="dialogVisible" width="90%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  :inline="true" label-width="100px" class="element-input">
-                <el-form-item label="频道名称：" prop="channelName" >
-                    <el-autocomplete
-                        v-show="type == 'add'"
-                        style="width: 100%;"
-                        class="inline-input"
-                        v-model="ruleForm.channelName"
-                        :fetch-suggestions="querySearch"
-                        placeholder="请选择频道"
-                        popper-class="mars-autocomplete"
-                        @select="handleSelectChannel">
-                        <template slot-scope="{ item }">
-                            <div>{{ item.name }}</div>
-                        </template>
-                    </el-autocomplete>
-                    <div v-show="type =='edit'" style="color: #fff">{{ ruleForm.channelName }}</div>
-                </el-form-item>
-                <el-form-item label="栏目名称：" prop="name" >
-                    <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
-                </el-form-item>
-                <el-form-item label="数据类型：" prop="townTypeId">
-                    <el-select v-model="ruleForm.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
-                        <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item.id"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="时次：" prop="timeType">
-                    <el-select v-model="ruleForm.timeType" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
-                        <el-option v-for="(item, index) in timeOption" :key="index" :label="item" :value="item"></el-option>
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="状态：" required>
-                    <el-radio-group v-model="ruleForm.status">
-                        <el-radio :label="1">启用</el-radio>
-                        <el-radio :label="2">禁用</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-divider></el-divider>
-                <el-form-item label="项目列表：" prop="element" style="width: 45%">
-                    <div style="color: #fff;">提示：请选择数据类型。</div>
-                    <!-- <el-checkbox-group v-model="ruleForm.element">
-                        <el-checkbox v-for="(item, index) in listElement" :key="index" :label="item.value" name="type">{{ item.name }}</el-checkbox>
-                    </el-checkbox-group> -->
-                    <div>
-                        <el-button class="button-s"  size="small" icon="el-icon-arrow-up" type="primary" :disabled="rightTransferValue.length == 0" @click="arrowUp('rightTransferValue','element')"></el-button>
-                        <el-button class="button-x"  size="small" icon="el-icon-arrow-down" :disabled="rightTransferValue.length == 0"  type="primary" @click="arrowDown('rightTransferValue', 'element')"></el-button>
-                    </div>
-                    <el-transfer
-                        class="column-trans"
-                        v-model="ruleForm.element" 
-                        :data="transferEleList"
-                        target-order="unshift"
-                        @right-check-change="(value) => transRightChange(value, 'rightTransferValue')"
-                        :titles="['可选项目', '已选项目']"
-                    ></el-transfer>
-                </el-form-item>
-                <el-form-item label="城市列表：" prop="element" style="width: 52%;">
-                    <div style="display: flex;">
-                        <el-form-item   style="width: 50%;">
-                            <el-input v-model="siteValue" placeholder="请输入城市站点" clearable style="width: 260px;" @change="siteData(siteValue)">
-                                <el-button slot="append" size="small" @click="siteData(siteValue)">查询</el-button>
-                                <el-button slot="append" size="small" type="primary" >导入</el-button>
-                            </el-input>
-                            <div style="color: #fff;"> 提示：请选择数据类型。 </div>
+        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :top="channelTop" :visible.sync="dialogVisible" width="60%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+                <div v-show="stepsNum == 1">
+                    <el-form :model="ruleFormColumn" :rules="rules" ref="ruleFormColumn" label-width="100px" class="element-input" size="medium">
+                        <el-form-item label="频道名称：" prop="channelName" >
+                            <el-autocomplete
+                                v-show="type == 'add'"
+                                style="width: 100%;"
+                                class="inline-input"
+                                v-model="ruleFormColumn.channelName"
+                                :fetch-suggestions="querySearch"
+                                placeholder="请选择频道"
+                                popper-class="mars-autocomplete"
+                                @select="(val) => handleSelectChannel(val, 1)">
+                                <template slot-scope="{ item }">
+                                    <div>{{ item.name }}</div>
+                                </template>
+                            </el-autocomplete>
+                            <div v-show="type =='edit'" style="color: #fff">{{ ruleFormColumn.channelName }}</div>
                         </el-form-item>
-                        <el-form-item  label="设置别名：" style="width: 50%">
-                            <el-input v-model="propsName" placeholder="请输入设置别名" clearable style="width:180px">
-                                <el-button slot="append" size="small" type="primary" :disabled="siteRightTransferValue.length == 0" @click="propsClick">确定</el-button>
-                            </el-input> 
+                        <el-form-item label="栏目名称：" prop="name" >
+                            <el-input v-model.trim="ruleFormColumn.name" placeholder="请输入频道名称"></el-input>
                         </el-form-item>
+                        <el-form-item label="数据类型：" prop="townTypeId">
+                            <el-select v-model="ruleFormColumn.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
+                                <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item.id"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="时次：" prop="timeType" :rules="rules.timeType" key="timeType">
+                            <el-select v-model="ruleFormColumn.timeType" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
+                                <el-option v-for="(item, index) in timeOption" :key="index" :label="item" :value="item"></el-option>
+                            </el-select>
+                        </el-form-item>
+                        <el-form-item label="状态：" required>
+                            <el-radio-group v-model="ruleFormColumn.status">
+                                <el-radio :label="1">启用</el-radio>
+                                <el-radio :label="2">禁用</el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                    </el-form>
+                    <div style="text-align: center;">
+                        <el-button size="medium" @click="handleClose">取 消</el-button>
+                        <el-button size="medium" type="primary" @click="stepsClick">下一步</el-button>
                     </div>
-                    <div>
-                        <el-button  class="button-s-one" size="small" icon="el-icon-arrow-up" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowUp('siteRightTransferValue', 'siteRef')"></el-button>
-                        <el-button  class="button-x-one" size="small" icon="el-icon-arrow-down" :disabled="siteRightTransferValue.length == 0"  type="primary" @click="arrowDown('siteRightTransferValue', 'siteRef')"></el-button>
+                </div>
+                <div v-show="stepsNum == 2">
+                    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input" size="medium">
+                        <el-form-item label="项目列表：" prop="element">
+                            <div style="color: #fff;">提示：请选择数据类型。</div>
+                            <!-- <el-checkbox-group v-model="ruleForm.element">
+                                <el-checkbox v-for="(item, index) in listElement" :key="index" :label="item.value" name="type">{{ item.name }}</el-checkbox>
+                            </el-checkbox-group> -->
+                            <!-- @right-check-change="(value) => transRightChange(value, 'rightTransferValue')" -->
+                            <el-transfer
+                                class="column-trans"
+                                v-model="ruleForm.element" 
+                                :data="transferEleList"
+                                target-order="unshift"
+                                @right-check-change="(value) => transRightChange(value, 'rightTransferValue')"
+                                @change="transferValueChange"
+                                :titles="['可选项目', '已选项目']"
+                                ref="refTransferEle"
+                            >
+                                <div slot="right-footer">
+                                    <div style="display: flex; justify-content: space-evenly">
+                                        <el-button  size="medium" type="primary" :disabled="rightTransferValue.length == 0" @click="arrowUp('rightTransferValue','element')">上升</el-button>
+                                        <el-button  size="medium" type="primary" :disabled="rightTransferValue.length == 0" @click="arrowDown('rightTransferValue', 'element')">下降</el-button>
+                                    </div>
+                                </div>
+                            </el-transfer>
+                        </el-form-item>
+                        <el-form-item label="城市列表：" prop="siteList">
+                            <div style="display: flex;">
+                                <el-form-item   style="width: 50%;">
+                                    <el-input v-model="siteValue" placeholder="城市站点" clearable style="width: 70%;" @change="siteData(1)">
+                                        <el-button slot="append" size="medium" @click="siteData(1)" :loading="siteLoading">查询</el-button>
+                                        <el-button slot="append" size="medium" type="primary" @click="dialogVisibleSiteExport = true" >导入</el-button>
+                                    </el-input>
+                                    <div style="color: #fff;"> 提示：请选择数据类型。 </div>
+                                </el-form-item>
+                                <el-form-item  label="设置别名：" style="width: 50%; margin:0;">
+                                    <el-input v-model="propsName" placeholder="设置别名" clearable style="width:75%">
+                                        <el-button slot="append" size="medium" type="primary" @click="propsClick">确定</el-button>
+                                    </el-input> 
+                                </el-form-item>
+                            </div>
+                            <!-- <div>
+                                <el-button  class="button-s-one" size="medium" icon="el-icon-arrow-up" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowUp('siteRightTransferValue', 'siteRef')"></el-button>
+                                <el-button  class="button-x-one" size="medium" icon="el-icon-arrow-down" :disabled="siteRightTransferValue.length == 0"  type="primary" @click="arrowDown('siteRightTransferValue', 'siteRef')"></el-button>
+                            </div> -->
+                            <el-transfer
+                                class="column-trans"
+                                v-model="ruleForm.siteList" 
+                                :data="transferSiteList"
+                                target-order="unshift"
+                                ref="refTransfer"
+                                :props="{
+                                    key: 'id',
+                                }"
+                                @right-check-change="(value) => transRightChange(value, 'siteRightTransferValue')"
+                                :titles="['可选城市', '已选城市']"
+                                >
+                                <span slot-scope="{ option }">{{ option.name }}{{ option.siteAlias ? `(${option.siteAlias})` : '' }}</span>
+                                <div slot="right-footer">
+                                    <div style="display: flex; justify-content: space-evenly">
+                                        <el-button  size="medium" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowUp('siteRightTransferValue','siteList')">上升</el-button>
+                                        <el-button  size="medium" type="primary" :disabled="siteRightTransferValue.length == 0" @click="arrowDown('siteRightTransferValue', 'siteList')">下降</el-button>
+                                    </div>
+                                </div>
+                            </el-transfer>
+                        </el-form-item>
+                        <el-form-item label="描述：">
+                            <el-input type="textarea" v-model="ruleForm.description" placeholder="描述"></el-input>
+                        </el-form-item>
+                    </el-form>
+                    <div slot="footer" style="text-align: center;">
+                        <el-button size="medium" @click="handleClose">取 消</el-button>
+                        <el-button size="medium" type="primary" @click="channelTop = '5%', stepsNum = 1">上一步</el-button>
+                        <el-button size="medium" type="primary" @click="submitForm(1)" :loading="dialogLoading">确 认</el-button>
                     </div>
-                    <el-transfer
-                        class="column-trans"
-                        v-model="ruleForm.siteList" 
-                        :data="transferSiteList"
-                        target-order="unshift"
-                        ref="refTransfer"
-                        :props="{
-                            key: 'id',
-                        }"
-                        @right-check-change="(value) => transRightChange(value, 'siteRightTransferValue')"
-                        :titles="['可选城市', '已选城市']"
-                        >
-                        <span slot-scope="{ option }">{{ option.name }}{{ option.siteAlias ? `(${option.siteAlias})` : '' }}</span>
-                </el-transfer>
-                </el-form-item>
-                <el-form-item label="描述：">
-                    <el-input type="textarea" v-model="ruleForm.description" placeholder="描述"></el-input>
-                </el-form-item>
-            </el-form>
-            <div slot="footer" style="text-align: center;">
-                <el-button size="small" @click="handleClose">取 消</el-button>
-                <el-button size="small" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
-            </div>
+                </div>
         </el-dialog>
         <!--  排序 -->
-        <el-dialog title="频道排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+        <el-dialog title="栏目排序" :visible.sync="dialogVisibleSort" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <div style="color: #6EA4B2;position: relative; top: -15px;z-index: 10;">提示：拖动下方列表进行排序。</div>
             <div style="display: flex; max-height: 600px; overflow: auto">
                 <div style="width: 50px;">
@@ -178,8 +213,8 @@
             </div>
         </el-dialog>
         <!-- 转移栏目 -->
-        <el-dialog title="转移栏目" :visible.sync="dialogVisibleTransfer" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="transferForm" :rules="rules" ref="ruleForm" label-width="100px" class="element-input">
+        <el-dialog title="转移栏目" :visible.sync="dialogVisibleTransfer" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <el-form :model="transferForm" :rules="rules" label-width="100px" class="element-input" size="medium">
                 <el-form-item label="栏目名称：" prop="name">
                     <div style="color: #fff">{{ transferForm.name}}</div>
                 </el-form-item>
@@ -204,12 +239,12 @@
             </div>
         </el-dialog>
          <!-- 添加要素 -->
-         <el-dialog title="项目列表" :visible.sync="dialogVisibleElement" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+         <el-dialog title="项目列表" :visible.sync="dialogVisibleElement" width="40%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <el-descriptions>
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{  ruleForm.name}}</el-descriptions-item>
                     <el-descriptions-item label="数据类型"> 
-                        <el-form :model="ruleForm" class="element-input">
+                        <el-form :model="ruleForm" class="element-input" size="medium">
                             <el-form-item>
                                 <el-select v-model="ruleForm.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
                                     <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item.id"></el-option>
@@ -218,8 +253,8 @@
                         </el-form>
                     </el-descriptions-item>
                 </el-descriptions>
-                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input">
-                    <el-form-item prop="element">
+                 <el-form ref="ruleForm" class="element-input" size="medium">
+                    <el-form-item required>
                          <div style="color:#fff" >
                             <el-checkbox :indeterminate="isIndeterminate" v-model="checkAll" @change="handleCheckAllChange">全选</el-checkbox>
                             <div style="margin: 15px 0;"></div>
@@ -233,7 +268,7 @@
                 <div>
                     <div style="color:#fff;margin: 10px 0;">提示：可拖动下方标签进行排序。</div>
                     <div>
-                        <draggable>
+                        <draggable v-model="checkedCities">
                             <el-tag
                                 v-for="tag in checkedCities"
                                 :key="tag.label"
@@ -246,32 +281,32 @@
                 </div>
             <div slot="footer" style="text-align: center;">
                 <el-button size="medium" @click="handleClose">取 消</el-button>
-                <el-button size="medium" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+                <el-button size="medium" type="primary" @click="submitFormElement" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
          <!-- 城市站点 -->
-         <el-dialog title="项目列表" :visible.sync="dialogVisibleSite" width="40%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+         <el-dialog title="站点列表" :visible.sync="dialogVisibleSite" width="50%" top="1%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
                 <el-descriptions :column="2">
                     <el-descriptions-item label="频道名称">{{ ruleForm.channelName}}</el-descriptions-item>
                     <el-descriptions-item label="栏目名称">{{ ruleForm.name}}</el-descriptions-item>
                     <el-descriptions-item label="数据类型"> {{ townTypeIdFn('', '', ruleForm.townTypeId)}} </el-descriptions-item>
                     <el-descriptions-item label="时次">{{ ruleForm.timeType }}</el-descriptions-item>
                 </el-descriptions>
-                 <el-form :model="ruleForm" :rules="rules" ref="ruleForm" class="element-input" size="medium">
+                 <el-form :rules="rules" class="element-input" size="medium">
                     <el-form-item label="城市站点：">
-                        <el-input v-model="siteValue" placeholder="请输入站点名称" clearable style="width: 240px;" @change="siteData"> </el-input>
-                        <el-input v-model="siteCode" placeholder="请输入站点编号" clearable style="width: 240px;" @change="siteData"> </el-input>
-                        <el-button type="primary" @click="siteData" style="margin-left: 10px;">查 询</el-button>
-                        <el-button type="primary" >导 入</el-button>
+                        <el-input v-model="siteDataListParams.name" placeholder="请输入站点名称" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
+                        <el-input v-model="siteDataListParams.code" placeholder="请输入站点编号" clearable style="width: 240px;" @change="initSiteDataList"> </el-input>
+                        <el-button type="primary" @click="initSiteDataList" style="margin-left: 10px;" :loading='siteLoading'>查 询</el-button>
+                        <el-button type="primary" @click="dialogVisibleSiteExport = true">导 入</el-button>
                     </el-form-item>
                     <el-form-item >
-                        <el-table ref="tableSiteList" class="element-table" max-height="300px" v-loading="tableLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                            <el-table-column type="index" label="顺序" width="55"> </el-table-column>
+                        <el-table class="element-table" max-height="300px" v-loading="siteLoading" :data="transferSiteList" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                            <el-table-column type="index" label="序号" width="55"> </el-table-column>
                             <el-table-column prop="name" label="名称"> </el-table-column>
                             <!-- <el-table-column prop="code" label="编码"> </el-table-column> -->
                             <el-table-column prop="siteAlias" label="别名">
                                 <template slot-scope="props">
-                                    <el-input v-model="props.row.siteAlias" placeholder="请输入站点别名" clearable> </el-input>
+                                    <el-input v-model.trim="props.row.siteAlias" placeholder="请输入站点别名" clearable> </el-input>
                                 </template>
                             </el-table-column>
                             <el-table-column label="操作">
@@ -280,13 +315,14 @@
                                 </template>
                             </el-table-column>
                         </el-table>
+                        <ComPagination style="margin-top: 10px;" @current-change="siteListCurrentChange" @size-change="siteListSizeChange" :total="siteListTotal"></ComPagination>
                     </el-form-item>
                 </el-form>
                 <el-divider></el-divider>
                 <div>
                     <div style="color:#fff;margin: 10px 0;">提示：可拖动下方标签进行排序。</div>
                     <div>
-                        <draggable>
+                        <draggable v-model="multipleSelection">
                             <el-tag
                                 v-for="tag in multipleSelection"
                                 :key="tag.label"
@@ -304,9 +340,34 @@
                 <el-button size="medium" type="primary" @click="submitSiteSort" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
-        <!--  编辑栏目1 -->
-        <el-dialog class="columnDialog" :title="type == 'add' ? '添加栏目' : '编辑栏目'" :visible.sync="dialogVisibleOne" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
-            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  label-width="100px" class="element-input">
+        <!-- 城市站点 导入 -->
+         <el-dialog title="站点导入" :visible.sync="dialogVisibleSiteExport" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+                 <el-form class="element-input" size="medium">
+                    <el-form-item label="文件列表：">
+                        <el-upload
+                            style="margin: 0 10px;"
+                            ref="formFile"
+                            class="upload-demo"
+                            action="#"
+                            :auto-upload="false"
+                            :limit="1"
+                            :file-list="fileList"
+                            :on-change="handleAvatarSuccess"
+                            :on-remove="handleAvatarRemove"
+                            >
+                            <el-button icon="el-icon-folder-opened" type="success">选取文件</el-button>
+                            <div slot="tip" class="el-upload__tip" style="color: #eee;">站点只能上传xls/xlsx文件，且最大上传数量 1</div>
+                        </el-upload>
+                    </el-form-item>
+                </el-form>
+            <div slot="footer" style="text-align: center;">
+                <el-button size="medium" @click="dialogVisibleSiteExport = false; fileList = []">取 消</el-button>
+                <el-button size="medium" type="primary" @click="submitSiteExport" :loading="dialogLoading">确 认</el-button>
+            </div>
+        </el-dialog>
+        <!--  编辑列表 -->
+        <el-dialog class="columnDialog" title="配置栏目" :visible.sync="dialogVisibleOne" width="30%" :before-close="handleClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
+            <el-form :model="ruleForm" :rules="rules" ref="ruleForm"  label-width="100px" class="element-input" size="medium">
                 <el-form-item label="频道名称：" prop="channelName" >
                     <el-autocomplete
                         style="width: 100%;"
@@ -315,27 +376,25 @@
                         :fetch-suggestions="querySearch"
                         placeholder="请选择频道"
                         popper-class="mars-autocomplete"
-                        @select="handleSelectChannel">
+                        @select="(val) => handleSelectChannel(val, 2)">
                         <template slot-scope="{ item }">
                             <div>{{ item.name }}</div>
                         </template>
                     </el-autocomplete>
                 </el-form-item>
                 <el-form-item label="栏目名称：" prop="name" >
-                    <el-input v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
+                    <el-input size="medium" v-model="ruleForm.name" placeholder="请输入频道名称"></el-input>
                 </el-form-item>
                 <el-form-item label="数据类型：" prop="townTypeId">
                     <el-select v-model="ruleForm.townTypeId" @change="townTypeChange" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
                         <el-option v-for="(item, index) in typeOption" :key="index" :label="item.typeName" :value="item.id"></el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="时次：" prop="timeType">
+                <!-- <el-form-item label="时次：" prop="timeType" key="timeType2">
                     <el-select v-model="ruleForm.timeType" placeholder="请选择" popper-class="mars-select" style="width: 100%;">
                         <el-option v-for="(item, index) in timeOption" :key="index" :label="item" :value="item"></el-option>
-                        <!-- <el-option label="12小时" value="12"></el-option>
-                        <el-option label="24小时" value="24"></el-option> -->
                     </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="状态：" required>
                     <el-radio-group v-model="ruleForm.status">
                         <el-radio :label="1">启用</el-radio>
@@ -349,7 +408,7 @@
             </el-form>
             <div slot="footer" style="text-align: center;">
                 <el-button size="medium" @click="handleClose">取 消</el-button>
-                <el-button size="medium" type="primary" @click="submitForm" :loading="dialogLoading">确 认</el-button>
+                <el-button size="medium" type="primary" @click="submitForm(3)" :loading="dialogLoading">确 认</el-button>
             </div>
         </el-dialog>
     </div>
@@ -357,6 +416,7 @@
 <script>
 import draggable from 'vuedraggable';
 import ComPagination from '@/components/comPagination.vue'
+import { HttpStatusCode } from 'axios';
 
 export default {
     name: 'columnManage',
@@ -369,10 +429,11 @@ export default {
                 channelName: '',
                 channelId: '',
                 name: "",
-                status: '',
+                status: null,
                 pageNum: 1,
                 pageSize: 10,
             },
+            stepsNum: 1,
             checkAll: false,
             checkedCities: [],
             total: 0,
@@ -383,13 +444,24 @@ export default {
             tableData: [],
             tableDataSort: [],
             multipleSelection: [],
+            channelTop: '5%',
             dialogVisible: false,
             dialogVisibleSort: false,
             dialogVisibleTransfer: false,
             dialogVisibleOne: false,
             dialogVisibleElement: false,
             dialogVisibleSite: false,
+            dialogVisibleSiteExport: false,
+            fileList: [],
             isIndeterminate: false,
+            siteLoading: false,
+            ruleFormColumn:{
+                channelName: '',
+                townTypeId: '',
+                status: 1,
+                name: "",
+                timeType: '',
+            },
             ruleForm:{
                 channelName: '',
                 channelId: '',
@@ -407,10 +479,22 @@ export default {
                 channelName: '',
                 channelId: '',
             },
+            siteListTotal: 0,
+            siteDataListParams: {
+                name: '',
+                code: '',
+                columnId: '',
+                status: 1,
+                pageNum: 1,
+                pageSize: 10,
+            },
+            times: null,
             transferEleList:[],
             transferSiteList:[],
             rightTransferValue: [],
             siteRightTransferValue: [],
+            copySiteList: [],
+            copySiteListEle: [],
             propsName: '',
             siteValue: '',
             siteCode: '',
@@ -433,8 +517,21 @@ export default {
                 element: [
                     { required: true,
                         validator: (rule, value, callback) => {
-                            if (this.checkedCities.length == 0){
+                            // console.log(this.ruleForm.element);
+                            // console.log(this.checkedCities, 'this.checkedCities');
+                            if (this.ruleForm.element.length == 0){
                                 callback(new Error('请选择项目'))
+                            }
+                            callback();
+                        },
+                        trigger: 'change'
+                    },
+                ],
+                siteList: [
+                    { required: true,
+                        validator: (rule, value, callback) => {
+                            if (this.ruleForm.siteList.length == 0 || this.$refs.refTransfer.$refs.rightPanel.data.length == 0){
+                                callback(new Error('请选择城市'))
                             }
                             callback();
                         },
@@ -466,7 +563,7 @@ export default {
                 return false
             }
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/column/page`, this.params).then(res => {
+            this.$http.post(`/column/page`, this.params).then(res => {
                 this.tableLoading = false
                     if(res.code == 200) {
                         this.tableData = res.data.records || []
@@ -495,7 +592,22 @@ export default {
         },
         onDataSort(){
             this.dialogVisibleSort = true
-            this.tableDataSort = [...this.tableData]
+            let params = {
+                channelName: this.params.channelName,
+                channelId: this.params.channelId,
+                name: "",
+                status: null,
+                pageNum: 1,
+                pageSize: 9999,
+            }
+            this.$http.post(`/column/page`, params).then(res => {
+                this.tableLoading = false
+                    if(res.code == 200) {
+                        this.tableDataSort = res.data.records || []
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
         },
         handleClose(){
             this.dialogVisible = false
@@ -506,51 +618,46 @@ export default {
             this.dialogVisibleSite = false
             this.checkAll = false
             this.checkedCities = []
+            this.transferSiteList = []
+            this.stepsNum = 1
+            this.siteValue = ""
         },
         columnEdit(row, dialogVisible, num){
             this.type = 'edit'
-            this.townTypeChange(row.townTypeId)
             this[dialogVisible] = true
-            this.$http.get(`${this.$api.server}/column/info/${row.id}`).then(res => {
+            this.townTypeChange(row.townTypeId)
+            this.$http.get(`/column/info/${row.id}`).then(res => {
                 if(res.code == 200) {
+                    this.ruleForm = {...res.data}
                     // 找到transferEleList 原型对象 才能返显
-                    // 1、 项目
-                    let keyList = []
-                    let checkedCities = []
-                    let keyArr = (res.data.element).split(',')
-                    keyArr.forEach(items => {
-                        this.transferEleList.forEach(item => {
-                            if (item.key == items){
-                                keyList.push(item.key)
-                                checkedCities.push(item)
-                            }
+                    if  (num !== 4) {
+                         // 1、 项目
+                        let keyList = []
+                        let checkedCities = []
+                        let keyArr = (res.data.element).split(',')
+                        keyArr.forEach(items => {
+                            this.transferEleList.forEach(item => {
+                                if (item.key == items){
+                                    keyList.push(item.key)
+                                    checkedCities.push(item)
+                                }
+                            })
                         })
-                    })
-                     // 2、城市
-                    let siteList = res.data.siteList.map(item => item.siteId)
-                    
-                    this.ruleForm = {
-                        ...res.data,
-                        siteList,
-                        element: keyList
+                          // 2、城市
+                        let siteList = res.data.siteList.map(item => item.siteId)
+                        this.copySiteListEle = res.data.siteList || []
+                        let {channelName, townTypeId, status, name, timeType,} = res.data
+                        this.ruleFormColumn = {channelName, townTypeId, status, name, timeType}
+                        this.ruleForm.siteList = siteList
+                        this.ruleForm.element = keyList
+                         // 3、项目 2
+                        this.checkedCities = checkedCities
+                        this.handleCheckedCitiesChange(checkedCities)
                     }
-                    // 3、项目 2
-                    this.checkedCities = checkedCities
-                    this.handleCheckedCitiesChange(checkedCities)
-
-                    // setTimeout(() => {
-                    //     this.transferSiteList.forEach(item => {
-                    //         res.data.siteList.forEach(sitem => {
-                    //             if (item.id == sitem.siteId){
-                    //                 item.siteAlias = sitem.siteAlias
-                    //             }
-                    //         })
-                    //     })
-                    // },1000)
-
                     // 站点
                     if (num == 4){
-                        this.siteData()
+                        this.siteDataListParams.channelId = row.id
+                        this.initSiteDataList()
                         this.columnsiteList(row)
                     }
                 } else {
@@ -558,7 +665,16 @@ export default {
                 }
             })
         },
-
+        // 下一步
+        stepsClick(){
+            this.$refs['ruleFormColumn'].validate((valid) => {
+                if (valid){
+                    this.stepsNum = 2
+                    this.siteData()
+                    this.channelTop = '1%'
+                }
+            })
+        },
         // 全选
         handleCheckAllChange(val) {
             let cityOptions = this.transferEleList
@@ -575,9 +691,10 @@ export default {
                 columnId: row.id,
                 siteAlias: '',
             }
-            this.$http.post(`${this.$api.server}/columnsite/list`, data).then(res => {
+            this.$http.post(`/columnsite/list`, data).then(res => {
                 if(res.code == 200) {
-                    this.multipleSelection = res.data || []
+                    let list = res.data || []
+                    this.multipleSelection = list.sort((a, b) => a.sort - b.sort)
                 } else {
                     this.$message.error(res.message)
                 }
@@ -589,7 +706,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/columnsite/del?id=${row.id}`).then(res => {
+                this.$http.post(`/columnsite/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.columnsiteList(this.ruleForm)
                         this.$message({ message: '删除成功', type: 'success' })
@@ -599,22 +716,24 @@ export default {
                 })
             }).catch(err => {})
         },
+        // 保存站点别名
         siteSave(row){
             if (!String(row.siteAlias).trim()){
                 this.$message.error('请输入站点别名');
                 return false
             }
-            console.log(this.ruleForm);
             this.dialogLoading = true
             let params = {
                 ...row,
                 siteId: row.id,
                 columnId: this.ruleForm.id,
             }
-            this.$http.post(`${this.$api.server}/columnsite/save`, params).then(res => {
+            let data = {...row, siteAlias: `${row.siteAlias}（${row.name}）`}
+            this.$http.post(`/columnsite/save`, params).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
-                    this.multipleSelection.push(row);
+                    data.id = res.data
+                    this.multipleSelection.push(data);
                 } else {
                     this.$message.error(res.message)
                 }
@@ -630,7 +749,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/column/del?id=${row.id}`).then(res => {
+                this.$http.post(`/column/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: '删除成功', type: 'success' })
@@ -641,7 +760,6 @@ export default {
             }).catch(err => {})
             
         },
-
         handleCurrentChange(page){
             this.params.pageNum = page
             this.initData()
@@ -650,13 +768,40 @@ export default {
             this.params.pageSize = size
             this.initData()
         },
+        siteListCurrentChange(page){
+            this.siteDataListParams.pageNum = page
+            this.siteDataList()
+        },
+        siteListSizeChange(size){
+            this.siteDataListParams.pageSize = size
+            this.siteDataList()
+        },
         // transfer 右边选中的结果
         transRightChange(value, dataType){
-            console.log(value, 'rightPanel');
+            console.log(value, dataType, 'rightPanel');
             this[dataType] = value
+        },
+        transferValueChange(value, direction, movedKeys){
+            this.ruleForm.element = value
         },
         // 上升排序
         arrowUp(dataType, ruleType){
+            let arr = []
+            let indexArr = []
+            console.log(dataType, ruleType);
+            this[dataType].forEach((items) => {
+                this.ruleForm[ruleType].forEach((item, index) => {
+                    if (items === item){
+                        arr.push(...this.ruleForm[ruleType].splice(index, 1))
+                        indexArr.push(index)
+                    }
+                })
+            })
+            let sortIndexArr = indexArr.sort((a,b) => a - b)
+            this.ruleForm[ruleType].splice(sortIndexArr[0] - 1, 0, ...arr)
+        },
+        // 下降排序
+        arrowDown(dataType, ruleType){
             let arr = []
             let indexArr = []
             this[dataType].forEach((items) => {
@@ -670,44 +815,80 @@ export default {
             let sortIndexArr = indexArr.sort((a,b) => a - b)
             this.ruleForm[ruleType].splice(sortIndexArr[0] - 1, 0, ...arr)
         },
-        // 下降排序
-        arrowDown(){
-            let arr = []
-            let indexArr = []
-            this.rightTransferValue.forEach((items) => {
-                this.ruleForm.element.forEach((item, index) => {
-                    if (items === item){
-                        arr.push(...this.ruleForm.element.splice(index, 1))
-                        indexArr.push(index)
-                    }
-                })
+        // 更多操作
+        handleCommand(val, row){
+            if (val == 'columnDelete' || val == 'columnTransfer') {
+                this[val](row)
+            } else {
+                let column = {
+                    dialogVisible: 1,
+                    dialogVisibleOne: 2,
+                    dialogVisibleElement: 3,
+                    dialogVisibleSite: 4
+                }
+                this.columnEdit(row, val, column[val])
+            }
+        },
+        handleAvatarRemove(){
+            this.fileList = []
+        },
+        handleAvatarSuccess(file, fileList){
+            this.fileList = fileList
+        },
+        // 项目元素编辑
+        submitFormElement(){
+            if (this.checkedCities.length == 0){
+                this.$message({ message: '请选择元素项目', type: 'error' })
+                return false;
+            }
+            let data = {...this.ruleForm,  userId: this.$store.state.userId}
+            let checkedCitiesList = this.checkedCities.map(item => item.key)
+            // 项目要素 参数
+            data.element = String(checkedCitiesList)
+            data.siteList = this.copySiteListEle
+            this.dialogLoading = true
+            this.$http.post(`/column/mod`, data).then(res => {
+                this.dialogLoading = false
+                if(res.code == 200) {
+                    this.initData()
+                    this.handleClose()
+                    this.$message({ message: '修改成功', type: 'success' })
+                } else {
+                    this.$message.error(res.message)
+                }
             })
-            let sortIndexArr = indexArr.sort((a,b) => a - b)
-            this.ruleForm.element.splice(sortIndexArr[0] + 1, 0, ...arr)
         },
         // 编辑新建 按钮
-        submitForm(){
-            // console.log(this.$refs.refTransfer.$refs.rightPanel.data);
+        submitForm(status){
+            console.log(this.ruleForm);
             this.$refs['ruleForm'].validate((valid) => {
                 if (valid) {
-                    let data = {...this.ruleForm,  userId: this.$store.state.userId}
-                    // 项目要素 参数
-                    let checkedCitiesList = this.checkedCities.map(item => item.key)
-                    data.element = String(checkedCitiesList)
-
-                    // let siteList = this.$refs.refTransfer.$refs.rightPanel.data
-                    let siteList = []
-                    let siteRef = siteList.map((item, index) => {
-                        return {
-                            sort: index + 1,
-                            siteId: item.id,
-                            siteAlias: item.siteAlias
-                        }
-                    })
-                    data.siteList = siteRef
+                    let data = {...this.ruleForm, userId: this.$store.state.userId}
                     this.dialogLoading = true
+                    if (status == 1){
+                        data = {...data, ...this.ruleFormColumn}
+                        // let checkedCitiesList = this.checkedCities.map(item => item.key)
+                        let checkedCitiesList =this.$refs.refTransferEle.$refs.rightPanel.data.map(item => item.key)
+                        // 项目要素 参数
+                        data.element = String(checkedCitiesList)
+                        let siteList = this.$refs.refTransfer.$refs.rightPanel.data
+                        let siteRef = siteList.map((item, index) => {
+                            return {
+                                sort: index + 1,
+                                siteId: item.id,
+                                siteAlias: item.siteAlias
+                            }
+                        })
+                        data.siteList = siteRef
+                    }
+                    if (status == 3){ 
+                        let checkedCitiesList = this.checkedCities.map(item => item.key)
+                        // 项目要素 参数
+                        data.element = String(checkedCitiesList)
+                        data.siteList = this.copySiteListEle
+                     }
                     if (this.type == 'edit'){
-                        this.$http.post(`${this.$api.server}/column/mod`, data).then(res => {
+                        this.$http.post(`/column/mod`, data).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -718,7 +899,7 @@ export default {
                             }
                         })
                     } else {
-                        this.$http.post(`${this.$api.server}/column/save`, data).then(res => {
+                        this.$http.post(`/column/save`, data).then(res => {
                             this.dialogLoading = false
                             if(res.code == 200) {
                                 this.initData()
@@ -732,29 +913,47 @@ export default {
                 } 
             })
         },
+        // 城市站点 导入确认
+        submitSiteExport(){
+            if (this.fileList.length == 0){
+                this.$message.error('请上传文件');
+                return false
+            }
+            let formData = new FormData()
+            formData.append('file', this.fileList[0].raw)
+            formData.append('id', this.ruleForm.id)
+            this.$http.post(`/column/importsite`, formData).then(res => {
+                if(res.code == 200) {
+                    this.dialogVisibleSiteExport = false
+                    this.$message({ message: '导入成功', type: 'success' })
+                    this.siteData(1)
+                } else {
+                    this.$message.error(res.message)
+                }
+            })
+        },
         // 城市站点添加
         submitSiteSort(){
-            this.$refs['ruleForm'].validate((valid) => {
-                if (valid) {
-                    console.log(123123,  this.multipleSelection, this.ruleForm);
-                    let data = {
-                        columnId: this.ruleForm.id,
-                        sortIds: this.multipleSelection.map(item => item.id)
+            if (this.multipleSelection.length > 0) {
+                this.dialogLoading = true
+                let data = {
+                    columnId: this.ruleForm.id,
+                    sortIds: this.multipleSelection.map(item => item.id)
+                }
+                this.$http.post(`/columnsite/sort`, data).then(res => {
+                    this.dialogLoading = false
+                    if(res.code == 200) {
+                        this.initData()
+                        this.handleClose()
+                        this.$message({ message: '修改成功', type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
                     }
-
-                    this.dialogLoading = true
-                    this.$http.post(`${this.$api.server}/columnsite/sort`, data).then(res => {
-                        this.dialogLoading = false
-                        if(res.code == 200) {
-                            this.initData()
-                            this.handleClose()
-                            this.$message({ message: '修改成功', type: 'success' })
-                        } else {
-                            this.$message.error(res.message)
-                        }
-                    })
-                } 
-            })
+                })
+            } else {
+                this.$message.error('请添加站点');
+            }
+            
         },
         // 获取项目列表
         townTypeChange(value){
@@ -785,7 +984,7 @@ export default {
             // this.siteData('')
             /** 时次类型 **/
             let obj = this.typeOption.find(item => item.id == value)
-            this.ruleForm.timeType = ''
+            // this.ruleForm.timeType = ''
             if (obj.time){
                 this.timeOption = obj.time.split(',')
             }
@@ -795,9 +994,12 @@ export default {
             this.isIndeterminate = false
         },
         submitSort(){
-            let data = this.tableDataSort.map(item => item.id)
+            let data = {
+                arr : this.tableDataSort.map(item => item.id),
+                channelId: this.params.channelId
+            }
             this.dialogLoading = true;
-            this.$http.post(`${this.$api.server}/channel/sort`, data).then(res => {
+            this.$http.post(`/column/sort`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -815,7 +1017,7 @@ export default {
                 columnId: this.transferForm.id,
                 newChannelId: this.transferForm.channelId
             }
-            this.$http.post(`${this.$api.server}/column/transfer`, data).then(res => {
+            this.$http.post(`/column/transfer`, data).then(res => {
                 this.dialogLoading = false
                 if(res.code == 200) {
                     this.initData()
@@ -833,7 +1035,7 @@ export default {
                 pageSize: 99,
                 typeName: ""
             }
-            this.$http.post(`${this.$api.server}/town/type/page`, params).then(res => {
+            this.$http.post(`/town/type/page`, params).then(res => {
                 if(res.code == 200) {
                     this.typeOption = res.data.records || []
                 } else {
@@ -848,9 +1050,10 @@ export default {
                 status: 1,
                 pageNum: 1,
                 pageSize: 99,
+                userId: this.$store.state.userId
             }
             let records = []
-            this.$http.post(`${this.$api.server}/channel/page`, params).then(res => {
+            this.$http.post(`/channel/page`, params).then(res => {
                 if(res.code == 200) {
                     records = res.data.records || []
                     // 调用 callback 返回建议列表的数据
@@ -862,19 +1065,20 @@ export default {
            
         },
         // 站点查询
-        siteData(name){
+        siteData(siteStstus){
             // console.log( this.ruleForm);
+            this.siteLoading = true
             let params = {
                 name: this.siteValue,
                 code: this.siteCode,
                 columnId: this.ruleForm.id,
                 status: 1,
                 pageNum: 1,
-                pageSize: 99,
+                pageSize: 99999,
             }
             this.$nextTick(() => {
-                // this.transferSiteList = [...this.$refs.refTransfer.$refs.rightPanel.data]
-                this.$http.post(`${this.$api.server}/site/page`, params).then(res => {
+                this.copySiteList = this.$refs.refTransfer.$refs.rightPanel.data || []
+                this.$http.post(`/site/page`, params).then(res => {
                     if(res.code == 200) {
                         let list = res.data.records || []
                         let transferSiteList = list.map(item => {
@@ -882,15 +1086,48 @@ export default {
                             return item;
                         })
                         this.transferSiteList = transferSiteList
+                        this.transferSiteList.push(...this.copySiteList)
                     } else {
                         this.$message.error(res.message)
                     }
+                    this.siteLoading = false
                 })
             })
-            
+        },
+        //初始化站点查询参数
+        initSiteDataList(){
+            this.siteDataListParams.pageNum = 1
+            this.siteDataListParams.pageSize = 10
+            this.siteDataList()
+        },
+        // 站点列表查询
+        siteDataList(){
+            this.siteLoading = true
+            this.$http.post(`/site/page`, this.siteDataListParams).then(res => {
+                this.siteLoading = false
+                if(res.code == 200) {
+                    let list = res.data.records || []
+                    let transferSiteList = list.map(item => {
+                        item.siteAlias = '';
+                        return item;
+                    })
+                    this.siteListTotal = res.data.total || 0
+                    this.transferSiteList = transferSiteList
+                } else {
+                    this.$message.error(res.message)
+                }
+            })
         },
         // 站点别名
         propsClick(){
+            if (this.siteRightTransferValue.length == 0){
+                this.$message.error('请先根据已选城市选择站点')
+                return
+            }
+            if (!this.propsName){
+                this.$message.error('请输入站点别名')
+                return
+            }
             let rightList = this.$refs.refTransfer.$refs.rightPanel.data || []
             rightList.forEach(item => {
                 this.siteRightTransferValue.forEach(siteItem => {
@@ -908,9 +1145,15 @@ export default {
                 this.params.channelId = value.id;
                 this.initData()
         },
-        handleSelectChannel(value){
+        handleSelectChannel(value, status){
+            if (status == 1){
+                this.ruleFormColumn.channelName = value.name
+                this.ruleFormColumn.channelId = value.id
+            } else {
                 this.ruleForm.channelName = value.name;
                 this.ruleForm.channelId = value.id;
+            }
+            
         },
         handleSelectTransfer(value){
                 this.transferForm.channelName = value.name;
@@ -922,14 +1165,6 @@ export default {
                 return this.typeOption.find(item => item.id == value).typeName
             }
         },
-        // timeTypeFn(row, props, value){
-        //     console.log(this.timeOption, this.timeOption.find(item => item == value));
-        //     if (value){
-
-        //         return this.timeOption.filter(item => item == value)
-        //     }
-        // },
-        
     }
 }
 </script>
@@ -939,6 +1174,10 @@ export default {
     height: 100%;
     display: flex;
     flex-direction: column;
+    /deep/ .el-upload-list__item{
+       background-color: #fff;
+       padding: 10px 0;
+    }
 }
 .list-sort{
     text-align: center;
@@ -953,11 +1192,11 @@ export default {
     color: #fff;
 }
 /deep/ .el-checkbox__input.is-checked+.el-checkbox__label{
-    color: rgba(0, 240, 255, 0.8);;
+    color: rgba(0, 240, 255, 0.8);
 }
 /deep/ .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner{
-    background-color: rgba(0, 240, 255, 0.8);;
-    border-color: rgba(0, 240, 255, 0.8);;
+    background-color: rgba(0, 240, 255, 0.8);
+    border-color: rgba(0, 240, 255, 0.8);
 }
 .columnDialog{
     /deep/ .el-transfer-panel .el-transfer-panel__header{
@@ -977,33 +1216,45 @@ export default {
     /deep/ .el-transfer-panel__item.el-checkbox{
         color: #fcfcfc;
     }
+    /deep/ .el-transfer-panel .el-transfer-panel__footer{
+        background-color: #14334D;
+    }
+    /deep/ .el-transfer-panel__body.is-with-footer .el-checkbox-group.el-transfer-panel__list{
+        height: 100%;
+    }
+    /deep/ .el-transfer-panel{
+        width: 35% !important;
+    }
+ 
     .button-s{
         width: 50px;
         position: absolute;
-        top: 34%;
-        left: 51.5%;
+        top: 33%;
+        left: 41.5%;
     }
     .button-x{
         width: 50px;
         margin: 0;
         position: absolute;
-        top: 66%;
-        left: 51.5%;
+        top: 65%;
+        left: 41.5%;
     }
     .button-s-one{
         width: 50px;
         position: absolute;
-        top: 40%;
-        left: 51.5%;
+        top: 39%;
+        left: 41.5%;
     }
     .button-x-one{
         width: 50px;
         margin: 0;
         position: absolute;
-        top: 70%;
-        left: 51.5%;
+        top: 68%;
+        left: 41.5%;
     }
-  
+    .el-dialog__wrapper{
+        height: 100%;
+    }
 }
 
 </style>

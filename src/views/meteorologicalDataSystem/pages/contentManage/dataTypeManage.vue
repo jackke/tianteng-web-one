@@ -3,7 +3,7 @@
     <div class="dataTypeManage">
         <el-form class="element-input" :inline="true" ref="params" :model="params" size="medium">
             <el-form-item label="数据名称：">
-               <el-input v-model="params.typeName" placeholder="请输入站点号" clearable></el-input>
+               <el-input v-model.trim="params.typeName" placeholder="请输入站点号" clearable></el-input>
             </el-form-item>
             <el-form-item label="状态：">
                 <el-select v-model="params.status" placeholder="请选择" popper-class="mars-select" style="width: 100px;">
@@ -14,36 +14,79 @@
             </el-form-item>
             <el-form-item >
                 <el-button icon="el-icon-search" type="primary" @click="initData">查询</el-button>
-                <el-button icon="el-icon-plus" type="warning" @click="siteAdd">增加</el-button>
+                <!-- <el-button icon="el-icon-plus" type="warning" @click="siteAdd">增加</el-button> -->
             </el-form-item>
         </el-form>
        <div style="flex: 1;display: flex; flex-direction: column;">
-            <el-table id="tablePrint" class="element-table" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
-                <el-table-column type="index" label="顺序"> </el-table-column>
+            <el-table id="tablePrint" class="element-table" height="100%" v-loading="tableLoading" :data="tableData" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                <el-table-column type="index" label="序号"> </el-table-column>
                 <el-table-column prop="typeName" label="数据名称"> </el-table-column>
-                <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
-                <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn"> </el-table-column>
-                <el-table-column prop="state" label="状态">
+                <el-table-column prop="fileName" label="文件名称"> </el-table-column>
+                <el-table-column prop="filePath" label="文件地址"> </el-table-column>
+                <!-- <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn"> </el-table-column> -->
+                <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn" width="180"> </el-table-column>
+                <el-table-column prop="state" label="状态" width="120">
                     <template slot-scope="scope">
-                        <span v-if="scope.row.status == 1" style="color: #23D26D;">已启用</span>
-                        <span type="text" v-if="scope.row.status == 2" style="color: #F95555">已禁用</span>
+                        <span v-if="scope.row.state == 1" style="color: #23D26D;">已启用</span>
+                        <span type="text" v-if="scope.row.state == 2" style="color: #F95555">已禁用</span>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作" width="180">
+                <el-table-column label="操作" width="150">
                     <template slot-scope="scope">
+                        <el-dropdown trigger="click" @command="(val) => handleCommand(val, scope.row)" popper-class="mars-select" :append-to-body="true"> 
+                            <el-button type="primary" size="small">
+                                更多操作<i class="el-icon-arrow-down el-icon--right"></i>
+                            </el-button>
+                            <el-dropdown-menu slot="dropdown" size="small" popper-class="mars-select">
+                                <el-dropdown-item command="dataEdit">编辑</el-dropdown-item>
+                                <el-dropdown-item command="dataRecalculate">回算</el-dropdown-item>
+                                <el-dropdown-item command="datalog">日志</el-dropdown-item>
+                                <!-- <el-dropdown-item command="startStop-1" v-if="scope.row.state == 2" divided>启用</el-dropdown-item>
+                                <el-dropdown-item command="startStop-2" v-if="scope.row.state == 1" divided>禁用</el-dropdown-item>
+                                <el-dropdown-item command="dataDelete">删除</el-dropdown-item> -->
+                            </el-dropdown-menu>
+                        </el-dropdown>
+                        <!-- <el-button size="medium" type="danger" v-if="scope.row.state == 1" @click="stateClick(scope.row, 2)">禁用</el-button>
+                        <el-button size="medium" type="primary" v-if="scope.row.state == 2" @click="stateClick(scope.row, 1)">启用</el-button>
+                        <el-button size="medium" type="primary" @click="dataRecalculate(scope.row)">回算</el-button>
+                        <el-button size="medium" type="primary" @click="datalog(scope.row)">日志</el-button>
                         <el-button size="medium" type="primary" @click="dataEdit(scope.row)">编辑</el-button>
-                        <el-button size="medium" type="danger" @click="dataDelete(scope.row)">删除</el-button>
+                        <el-button size="medium" type="danger" @click="dataDelete(scope.row)">删除</el-button> -->
                     </template>
                 </el-table-column>
             </el-table>
             <ComPagination style="margin-top: 20px;" :total="total" @current-change="handleCurrentChange" @size-change="handleSizeChange"></ComPagination>
        </div>
-       <el-dialog title="添加站点" :visible.sync="dialogVisible" width="30%" :before-close="handleClose" :close-on-click-modal="false" :append-to-body="true">
+       <el-dialog title="编辑数据类型" :visible.sync="dialogVisible" width="40%" :before-close="dataDialogClose" :close-on-click-modal="false" :modal-append-to-body="false" :append-to-body="false">
             <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="100px"  class="element-input">
                 <el-form-item label="数据名称：" prop="name">
                     <el-input v-model="ruleForm.name" placeholder="请输入数据名称"></el-input>
                 </el-form-item>
+                <el-form-item label="cron: " prop="cron">
+                    <div style="display:flex;">
+                        <el-input v-model="ruleForm.cron" placeholder="请输入cron" readonly clearable></el-input> 
+                        <el-button icon="el-icon-coin" size="small" type="primary" @click="openCron = true" style="margin-left:10px">生 成</el-button>
+                    </div>
+                </el-form-item>
                 <el-form-item label="元素名称：" prop="elementList" >
+                    <div class="tag-element">
+                        <div v-for="(item, index) in ruleForm.elementList" :key="index">
+                            <el-tag v-if="!item.status" class="input-new-tag" @click="doubleClick(index)" >{{item.name}}</el-tag>
+                            <el-input
+                                style="width: 200px;margin-right: 10px"
+                                class="input-new-tag"
+                                v-if="item.status"
+                                :key="index"
+                                v-model="ruleForm.elementList[index].name"
+                                size="medium"
+                                @keyup.enter.native="handleInputConfirm(index)"
+                                @blur="handleInputConfirm(index)"
+                                >
+                            </el-input>
+                        </div>
+                    </div>
+                </el-form-item>
+                 <!-- <el-form-item label="元素名称：" prop="elementList" >
                     <div class="tag-element">
                         <draggable v-model="ruleForm.elementList">
                             <el-tag
@@ -60,13 +103,19 @@
                             v-if="inputVisible"
                             v-model="inputValue"
                             ref="saveTagInput"
-                            size="small"
+                            size="medium"
                             @keyup.enter.native="handleInputConfirm"
                             @blur="handleInputConfirm"
                             >
                         </el-input>
-                        <el-button v-else type="primary" size="small" @click="showInput">+ 添加元素名称</el-button>
+                        <el-button v-else type="primary" size="medium" @click="showInput">+ 添加元素名称</el-button>
                     </div>
+                </el-form-item> -->
+                <el-form-item label="文件名称：" prop="fileName">
+                    <el-input v-model="ruleForm.fileName" placeholder="请输入文件名称。如：filename[MM][DD][HH].[FFF]"></el-input>
+                </el-form-item>
+                <el-form-item label="文件地址：" prop="filePath">
+                    <el-input v-model="ruleForm.filePath" placeholder="请输入文件地址"></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="站点名称：" prop="resource">
                     <el-input v-model="ruleForm.name" placeholder="请输入站点名称"></el-input>
@@ -86,20 +135,122 @@
                 <el-button size="medium" type="primary" @click="submitForm('ruleForm')">确 定</el-button>
             </div>
         </el-dialog>
+        <el-dialog title="Cron表达式生成器" :center="true" top="1%" :visible.sync="openCron" destroy-on-close :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
+            <cron @close="openCron=false" @fill="crontabFill" :expression="cronValue" :hideComponent="tabTitlesKey"></cron>
+        </el-dialog>
+        <el-dialog title="回算" top="5%" width="500px" :visible.sync="openRecalculate" :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
+            <el-form :model="recalculateForm" :rules="rules" ref="ruleForm" label-width="100px"  class="element-input">
+                <el-form-item label="数据名称：">
+                    {{ recalculateForm.typeName }}
+                </el-form-item>
+                <el-form-item label="开始时间：" prop="startTime">
+                    <el-date-picker
+                        v-model="recalculateForm.startTime"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        align="right"
+                        popper-class="mars-date"
+                        value-format="yyyyMMddHH"
+                        default-time="00:00:00"
+                        >
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="结束时间：" prop="endTime">
+                    <el-date-picker
+                        v-model="recalculateForm.endTime"
+                        type="datetime"
+                        placeholder="选择日期时间"
+                        align="right"
+                        popper-class="mars-date"
+                        value-format="yyyyMMddHH"
+                        default-time="23:00:00"
+                        >
+                    </el-date-picker>
+                </el-form-item>
+            </el-form>
+            <div slot="footer" style="text-align: center;">
+                <el-button size="medium" @click="openRecalculateClose">取 消</el-button>
+                <el-button size="medium" type="primary" :loading="dialogLoading" @click="submitRecalculate">确 定</el-button>
+            </div>
+        </el-dialog>
+        <el-dialog title="查看日志" top="3%" width="800px" :visible.sync="openlog" :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
+            <el-form :model="logForm" :rules="rules" ref="ruleForm" :inline="true" label-width="100px"  class="element-input" size="medium">
+                <el-form-item label="开始时间：" prop="startTime">
+                    <el-date-picker
+                        v-model="logForm.startTime"
+                        type="date"
+                        placeholder="选择日期时间"
+                        popper-class="mars-date"
+                        >
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="结束时间：" prop="endTime">
+                    <el-date-picker
+                        v-model="logForm.endTime"
+                        type="date"
+                        placeholder="选择日期时间"
+                        popper-class="mars-date"
+                        >
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item >
+                    <el-button  type="primary" :loading="dialogLoading" @click="initLog">查询</el-button>
+                </el-form-item>
+            </el-form>
+            <div>
+                <el-table id="tablePrint" class="element-table" v-loading="tableLogLoading" :data="tableLog" element-loading-text="努力加载中..." element-loading-spinner="el-icon-loading" element-loading-background="rgba(4,42,75, 0.5)">
+                    <el-table-column type="index" label="序号"> </el-table-column>
+                    <el-table-column prop="parseSteps" label="解析内容">
+                        <template slot-scope="scope">
+                            <el-tooltip class="item" effect="dark" content="点击查看" placement="top">
+                                <div class="parseSteps" @click="parseStepsClick(scope.row)">
+                                    {{ scope.row.parseSteps }}
+                                </div>
+                            </el-tooltip>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="recordsInserted" label="入库总数"> </el-table-column>
+                    <el-table-column prop="recordsParsed" label="解析总数"> </el-table-column>
+                    <el-table-column prop="createTime" label="创建时间" :formatter="$changeTime.createTimeFn" width="150"> </el-table-column>
+                    <el-table-column prop="updateTime" label="更新时间" :formatter="$changeTime.createTimeFn" width="150"> </el-table-column>
+                    <el-table-column prop="state" label="状态" width="80">
+                        <template slot-scope="scope">
+                            <span v-if="scope.row.status == 1" style="color: #23D26D;">成功</span>
+                            <span type="text" v-if="scope.row.status == 2" style="color: #F95555">失败</span>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <ComPagination style="margin-top: 20px;" :total="totalLog" @current-change="logCurrentChange" @size-change="logSizeChange"></ComPagination>
+            </div>
+        </el-dialog>
+        <el-dialog :visible.sync="openTitle" destroy-on-close :modal-append-to-body="false" :append-to-body="false" :close-on-click-modal="false">
+            <div style="white-space: pre-line;">
+                {{ titleParseSteps }}
+            </div>
+            <div slot="footer" style="text-align: center;">
+                <el-button size="medium" type="primary" @click="openTitle = false">确 定</el-button>
+            </div>
+        </el-dialog>
     </div>
 </template>
 <script>
 import ComPagination from '@/components/comPagination.vue'
 import draggable from 'vuedraggable';
+import {cron} from 'wz-vue-cron-tab'
 
 export default {
     name: 'siteManage',
-    components: {ComPagination, draggable},
+    components: {ComPagination, draggable, cron},
     data() {
         return {
             dialogVisible: false,
             tableLoading: false,
             inputVisible: false,
+            openCron: false,
+            cronValue: '',
+            tabTitlesKey: ["second", "week","year"],
+            openRecalculate: false,
+            dialogLoading: false,
             params:{
                 typeName: "",
                 status: '',
@@ -111,9 +262,29 @@ export default {
             ruleForm:{
                 code: '',
                 name: '',
+                cron: '',
+                fileName: '',
+                filePath: '',
                 status: 1,
                 elementList: [],
             },
+            recalculateForm:{
+                startTime:'',
+                endTime: '',
+            },
+            openTitle: false,
+            titleParseSteps: '',
+            tableLogLoading: false,
+            openlog: false,
+            logForm:{
+                endTime: "",
+                pageNum: 0,
+                pageSize: 10,
+                startTime: "",
+                typeId: 0
+            },
+            tableLog: [],
+            totalLog: 0,
             tableData: [{
                 date: '2016-05-02',
                 name: '王小虎',
@@ -139,6 +310,21 @@ export default {
                 name: [
                     { required: true, message: '请输入站点名称', trigger: 'blur' },
                 ],
+                fileName: [
+                    { required: true, message: '请输入文件名称', trigger: 'blur' },
+                ],
+                filePath: [
+                    { required: true, message: '请输入文件地址', trigger: 'blur' },
+                ],
+                cron: [
+                    { required: true, 
+                        validator: (rule, value, callback) => {
+                            if (!this.ruleForm.cron){
+                                callback(new Error("请输入cron"))
+                            }
+                            callback();
+                        }, trigger: 'blur' },
+                ],
                 elementList: [
                     { required: true, 
                         validator: (rule, value, callback) => {
@@ -150,6 +336,12 @@ export default {
                         trigger: 'change'
                     },
                 ],
+                startTime: [
+                    { required: true, message: '请选择开始时间', trigger: 'change' },
+                ],
+                endTime: [
+                    { required: true, message: '请选择结束时间', trigger: 'change' },
+                ],
             }
         }
     },
@@ -159,7 +351,7 @@ export default {
     methods: {
         initData(){
             this.tableLoading = true
-            this.$http.post(`${this.$api.server}/town/type/page`, this.params).then(res => {
+            this.$http.post(`/town/type/page`, this.params).then(res => {
                 this.tableLoading = false
                 if(res.code == 200) {
                     this.tableData = res.data.records || []
@@ -189,14 +381,18 @@ export default {
             let tagList = []
             for (const key in row) {
                 if (key.match(reg) && row[key]){
-                    tagList.push(row[key])
+                    tagList.push({status: false, name: row[key]})
                 }
             }
+            // console.log(row);
             this.ruleForm = {
                 name: row.typeName,
                 status: row.status || 1,
                 elementList: tagList,
-                id: row.id
+                id: row.id,
+                cron: row.cron,
+                fileName: row.fileName,
+                filePath: row.filePath,
             }
         },
         dataDelete(row){
@@ -205,7 +401,7 @@ export default {
                 cancelButtonText: '取消',
                 type: 'warning'
             }).then(() => {
-                this.$http.post(`${this.$api.server}/town/type/del?id=${row.id}`).then(res => {
+                this.$http.post(`/town/type/del?id=${row.id}`).then(res => {
                     if(res.code == 200) {
                         this.initData()
                         this.$message({ message: `删除成功`, type: 'success' })
@@ -215,18 +411,52 @@ export default {
                 })
             }).catch(err => {})
         },
+        parseStepsClick(row){
+            this.titleParseSteps = row.parseSteps
+            this.openTitle = true
+            // this.$notify({
+            //     title: '提示',
+            //     message: row.parseSteps,
+            //     duration: 0
+            // });
+            // this.$confirm(row.parseSteps, '', {
+            //     confirmButtonText: '确定',
+            // }).then(() =>{});
+        },
+        // 日志
+        datalog(row){
+            this.openlog = true
+            var year = new Date().getFullYear();  //获取年
+            var month = new Date().getMonth()+1; //月,因为是从0开始的,所以要加一
+            var date = new Date().getDate();      //日
+            this.logForm.typeId = row.id
+            this.logForm.startTime = `${year}-${month < 10 ? '0' + month : month}-${date < 10 ? '0' + date : date}`
+            this.logForm.endTime = `${year}-${month < 10 ? '0' + month : month}-${date < 10 ? '0' + date : date}`
+            this.initLog()
+        },
+        initLog(){
+            this.tableLogLoading = true
+            this.$http.post(`/hfFileParsingLogsPO/page`, this.logForm).then(res => {
+                if(res.code == 200) {
+                    this.tableLog = res.data.records || []
+                    this.totalLog = res.data.total
+                } else {
+                    this.$message.error(res.message)
+                }
+                this.tableLogLoading = false
+            })
+        },
         // ------------------ 添加元素类型  start--------------------------------
-        handleInputConfirm() {
-            let inputValue = this.inputValue;
-            if (inputValue) {
-            this.ruleForm.elementList.push(inputValue);
-            }
-            this.inputVisible = false;
-            this.inputValue = '';
+        doubleClick(index){
+            console.log(index);
+            this.ruleForm.elementList[index].status = true
         },
-        handleClose(tag) {
-            this.ruleForm.elementList.splice(this.ruleForm.elementList.indexOf(tag), 1);
+        handleInputConfirm(index) {
+            this.ruleForm.elementList[index].status = false
         },
+        // handleClose(tag) {
+        //     this.ruleForm.elementList.splice(this.ruleForm.elementList.indexOf(tag), 1);
+        // },
 
         showInput() {
             this.inputVisible = true;
@@ -243,6 +473,86 @@ export default {
             this.params.pageSize = size
             this.initData()
         },
+        logCurrentChange(page){
+            this.logForm.pageNum = page
+            this.initLog()
+        },
+        logSizeChange(size){
+            this.logForm.pageSize = size
+            this.initLog()
+        },
+        /** 确定后回传值 */
+         crontabFill(value) {
+            this.ruleForm.cron = value
+            // this.ruleForm.dataList[this.cronListIndex].cron = value
+        },
+        handleCommand(value, row){
+            console.log(value);
+            if (value.match(/startStop/)){
+                let state = value.split('-')[1]
+                this.stateClick(row, state);
+            } else {
+                this[value](row);
+            }
+        },
+        // 禁用 启用
+        stateClick(row, state){
+            let title = ['', '启用', '禁用'][state]
+            this.$confirm(`是否确认 “${title}” 该数据类型？`, '提示', {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }).then(() => {
+                let data = {
+                    state,
+                    id: row.id,
+                    xxlId: row.xxlId
+                }
+                this.$http.post(`/town/stop`, data).then(res => {
+                    if(res.code == 200) {
+                        this.initData()
+                        this.$message({ message: `${title}成功`, type: 'success' })
+                    } else {
+                        this.$message.error(res.message)
+                    }
+                })
+            }).catch(err => {})
+        },
+        dataRecalculate(row){
+            this.recalculateForm = {
+                typeName: row.typeName,
+                typeId: row.id,
+                startTime: '',
+                endTime: '',
+            }
+            this.openRecalculate = true
+        },
+        openRecalculateClose(){
+            this.$refs['ruleForm'].clearValidate()
+            this.openRecalculate = false
+        },
+        submitRecalculate(){
+            this.$refs['ruleForm'].validate((valid) => {
+                if (valid) {
+                    this.dialogLoading = true
+                    this.$http.post(`/town/call`, this.recalculateForm).then(res => {
+                        this.dialogLoading = false
+                        if (res.code == 200){
+                            this.$message({ message: '回算成功', type: 'success' })
+                            this.openRecalculateClose()
+                        } else {
+                            this.$message.error(res.message)
+                        }
+                    }).catch((error) => {
+                        this.dialogLoading = false
+                        this.$message.error(error)
+                    })
+                } else {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
         // ------------------ 弹框  start--------------------------------
         submitForm(){
             this.$refs['ruleForm'].validate((valid) => {
@@ -251,13 +561,14 @@ export default {
                     let data = {
                         typeName: this.ruleForm.name,
                         status: this.ruleForm.status,
-                        id: this.ruleForm.id
+                        id: this.ruleForm.id,
+                        cron: this.ruleForm.cron,
                     }
                     this.ruleForm.elementList.forEach((item, index) => {
-                        data[`ele${index + 1}Name`] = item
+                        data[`ele${index + 1}Name`] = item.name
                     })
                     if(this.submitType == 'add'){
-                        this.$http.post(`${this.$api.server}/town/type/save`, data).then(res => {
+                        this.$http.post(`/town/type/save`, data).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.dataDialogClose()
@@ -272,7 +583,7 @@ export default {
                         })
                     }
                     if(this.submitType == 'edit'){
-                        this.$http.post(`${this.$api.server}/site/mod`, data).then(res => {
+                        this.$http.put(`/town/type/mod`, data).then(res => {
                             this.dialogLoading = false
                             if (res.code == 200){
                                 this.dataDialogClose()
@@ -314,6 +625,48 @@ export default {
             color: #F95555;
         }
     }
+}
+.parseSteps{
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp:2;
+}
+
+/deep/ .el-descriptions-item__content{
+    // display: none;
+}
+/deep/ .el-tabs--border-card{
+    background-color: transparent;
+    border-color: transparent;
+    color:#fff;
+}
+/deep/ .el-tabs--border-card>.el-tabs__header{
+    background-color: transparent;
+}
+/deep/ .el-tabs--border-card>.el-tabs__header .el-tabs__item.is-active{
+    background-color: transparent;
+    border:0;
+}
+/deep/ .el-dialog__body {
+    color: #fff;
+}
+/deep/ .popup-result .title{
+    text-shadow: 0px 8px 10px rgba(14,23,47,0.56);
+    background: linear-gradient(180deg, #FFFFFF 0.537109375%, #89EBF4 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-color: transparent;
+}
+/deep/ .el-radio .el-radio__label{
+    color: #fff;
+}
+/deep/ .popup-main{
+    background: transparent;
+    color: #fff;
+}
+.el-dialog__wrapper{
+    height: 100vh;
 }
 
 </style>

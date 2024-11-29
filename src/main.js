@@ -1,5 +1,4 @@
 import Vue from 'vue';
-import "./api/config"
 import App from './App.vue';
 import ElementUI from "element-ui";
 import router from "./router";
@@ -7,6 +6,12 @@ import store from "./store";
 import zhLang from 'element-ui/lib/locale/lang/zh-CN';
 import locale from './assets/elementUi/cn';
 
+// 将所有组件为全局组件
+import dataV from '@jiaminghi/data-view'
+
+// autofit.js 自动适数据大屏插件
+
+Vue.use(dataV)
 
 Vue.use(ElementUI, {
   locale: { el: {...zhLang.el, ...locale.el}}
